@@ -2,7 +2,8 @@
 #include "complex.h"
 #include "matrix.h"
 
-int main(){
+int main()
+{
 
     Matrix mat1 = MatrixInput();
     MatrixOutput(mat1);

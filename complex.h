@@ -3,7 +3,7 @@ typedef struct Complex
 {
   double imaginary;
   double real;
-}Complex;
+} Complex;
 
-void ComplexInput(Complex* num);
+void ComplexInput(Complex *num);
 void ComplexOutput(Complex num);
