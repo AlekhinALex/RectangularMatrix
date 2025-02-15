@@ -9,21 +9,34 @@ Matrix MatrixInput()
     scanf("%d", &tempMatrix.length);
     printf("Enter matrix height: ");
     scanf("%d", &tempMatrix.height);
-    tempMatrix.data = realloc(tempMatrix.data, sizeof(Complex) * tempMatrix.height * tempMatrix.length);
+
+    tempMatrix.data = malloc(sizeof(Complex) * tempMatrix.height * tempMatrix.length);
+    if (tempMatrix.data == NULL)
+    {
+        printf("Error: Memory allocation failed\n");
+        exit(1);
+    }
+
     printf("Enter matrix:\n");
     int counter = 0;
     while (counter != (tempMatrix.length * tempMatrix.height))
     {
         Complex num;
-        if (scanf("%lg", &num.real) > 0)
+        while (1)
         {
-            num.imaginary = 0;
-        }
-        else if (scanf("(%lg,%lg)", &num.real, &num.imaginary) != 2)
-        {
-            printf("Error: Invalid format. Try again.\n");
-            while (getchar() != '\n')
-                ;
+            if (scanf("%lg", &num.real) > 0)
+            {
+                num.imaginary = 0;
+                break;
+            }
+            else if (scanf("(%lg,%lg)", &num.real, &num.imaginary) != 2)
+            {
+                printf("Error: Invalid format. Try again.\n");
+                while (getchar() != '\n')
+                    ;
+                continue;
+            }
+            break;
         }
         tempMatrix.data[counter] = num;
         counter++;
@@ -40,22 +53,31 @@ void MatrixOutput(Matrix matrix)
         return;
     }
 
-    int counter = 1;
-    for (int i = 0; i < matrix.length * matrix.height; i++)
+    for (int i = 0; i < matrix.height; i++)
     {
-        if (matrix.data[i].imaginary == 0)
+        for (int j = 0; j < matrix.length; j++)
         {
-            printf("%g ", matrix.data[i].real);
+            Complex num = matrix.data[i * matrix.length + j];
+            if (num.imaginary == 0)
+            {
+                printf("%g ", num.real);
+            }
+            else
+            {
+                printf("(%g%+gi) ", num.real, num.imaginary);
+            }
         }
-        else
-        {
-            printf("(%g+%gi) ", matrix.data[i].real, matrix.data[i].imaginary);
-        }
-        if (counter == matrix.length)
-        {
-            printf("\n");
-            counter = 0;
-        }
-        counter++;
+        printf("\n");
     }
+}
+
+void MatrixFree(Matrix *matrix)
+{
+    if (matrix->data != NULL)
+    {
+        free(matrix->data);
+        matrix->data = NULL;
+    }
+    matrix->length = 0;
+    matrix->height = 0;
 }

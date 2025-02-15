@@ -9,3 +9,4 @@ typedef struct Matrix
 
 Matrix MatrixInput();
 void MatrixOutput(Matrix matrix);
+void MatrixFree(Matrix *matrix);
