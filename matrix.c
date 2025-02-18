@@ -1,35 +1,86 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "matrix.h"
+#include <ctype.h>
 
 Matrix MatrixInput()
 {
     Matrix tempMatrix;
-    printf("Enter matrix length: ");
-    scanf("%d", &tempMatrix.length);
-    printf("Enter matrix height: ");
-    scanf("%d", &tempMatrix.height);
+    int value;
+    char *buffer = NULL;
+    size_t buffer_size = 0;
+    char *chk;
+    int positive_checker = 0;
+
+    printf("Matrix Size\n");
+    printf("-----------\n");
+    printf("Remember, the matrix dimensions must be greater than zero.\n");
+
+    do
+    {
+        printf("Enter matrix length: ");
+        ssize_t n_chars_read = getline(&buffer, &buffer_size, stdin);
+
+        value = (int)strtol(buffer, &chk, 10);
+        if (!isspace(*chk) && *chk != 0)
+        {
+            printf("Error: Invalid input. Try again\n");
+        }
+        else if (value <= 0)
+        {
+            printf("Error: Length must be positive. Try again\n");
+            ++positive_checker;
+        }
+        --positive_checker;
+    } while (!isspace(*chk) && *chk != 0 || !positive_checker);
+    tempMatrix.length = value;
+
+    do
+    {
+        printf("Enter matrix height: ");
+        ssize_t n_chars_read = getline(&buffer, &buffer_size, stdin);
+
+        value = (int)strtol(buffer, &chk, 10);
+        if (!isspace(*chk) && *chk != 0)
+        {
+            printf("Error: Invalid input. Try again\n");
+        }
+        else if (value <= 0)
+        {
+            printf("Error: Length must be positive. Try again\n");
+            ++positive_checker;
+        }
+        --positive_checker;
+    } while (!isspace(*chk) && *chk != 0 || !positive_checker);
+    free(buffer);
+    tempMatrix.height = value;
 
     tempMatrix.data = malloc(sizeof(Complex) * tempMatrix.height * tempMatrix.length);
+
     if (tempMatrix.data == NULL)
     {
-        printf("Error: Memory allocation failed\n");
+        printf("Memory allocation failed. Exiting.\n");
         exit(1);
     }
 
-    printf("Enter matrix:\n");
+    printf("Size of matrix: %d x %d\n", tempMatrix.height, tempMatrix.length);
+    printf("Matrix Input\n");
+    printf("---------------\n");
+    printf("Input rules:\n");
+    printf("- Enter real numbers (e.g., 5.2) or complex numbers (e.g., (3.5, 4))\n");
+
     int counter = 0;
     while (counter != (tempMatrix.length * tempMatrix.height))
     {
         Complex num;
         while (1)
         {
-            if (scanf("%lg", &num.real) > 0)
+            if (scanf("%lg", &num.real) != 0)
             {
                 num.imaginary = 0;
                 break;
             }
-            else if (scanf("(%lg,%lg)", &num.real, &num.imaginary) != 2)
+            else if (scanf("(%lf,%lf)", &num.real, &num.imaginary) != 2)
             {
                 printf("Error: Invalid format. Try again.\n");
                 while (getchar() != '\n')

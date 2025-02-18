@@ -2,8 +2,8 @@
 #include "complex.h"
 typedef struct Matrix
 {
-    unsigned length;
-    unsigned height;
+    unsigned int length;
+    unsigned int height;
     Complex *data;
 } Matrix;
 
