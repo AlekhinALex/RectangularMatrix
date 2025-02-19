@@ -1,18 +1,27 @@
 #include <stdio.h>
 #include "complex.h"
 
-void ComplexInput(Complex *num)
+Complex ComplexSum(Complex z1, Complex z2, int sign)
 {
-    printf("Enter complex number like in template (real, imaginary)\n");
-    while (scanf("(%lg,%lg)", &num->real, &num->imaginary) != 2)
+    Complex tempComplex;
+    if (sign == 1)
     {
-        printf("Error: Invalid format. Try again.\n");
-        while (getchar() != '\n')
-            ;
+        tempComplex.imaginary = z1.imaginary + z2.imaginary;
+        tempComplex.real = z1.real + z2.real;
     }
+    else
+    {
+        tempComplex.imaginary = z1.imaginary - z2.imaginary;
+        tempComplex.real = z1.real - z2.real;
+    }
+
+    return tempComplex;
 }
 
-void ComplexOutput(Complex num)
+Complex ComplexMultiplyByComplex(Complex z1, Complex z2)
 {
-    printf("%g+%gi ", num.real, num.imaginary);
+    Complex tempComplex;
+    tempComplex.real = z1.real * z2.real - z1.imaginary * z2.imaginary;
+    tempComplex.real = z1.real * z2.imaginary + z1.imaginary * z2.real;
+    return tempComplex;
 }

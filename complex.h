@@ -5,5 +5,6 @@ typedef struct Complex
   double real;
 } Complex;
 
-void ComplexInput(Complex *num);
-void ComplexOutput(Complex num);
+Complex ComplexSum(Complex a, Complex b, int sign); // if sign = 1 : a + b, else = a - b
+Complex ComplexMultiplyByConstant(double constant, Complex a);
+Complex ComplexMultiplyByComplex(Complex a, Complex b);

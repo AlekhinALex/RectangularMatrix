@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "complex.h"
 #include "matrix.h"
 #include <ctype.h>
 
@@ -10,30 +11,10 @@ Matrix MatrixInput()
     char *buffer = NULL;
     size_t buffer_size = 0;
     char *chk;
-    int positive_checker = 0;
 
-    printf("Matrix Size\n");
+    printf("\nMatrix Size\n");
     printf("-----------\n");
     printf("Remember, the matrix dimensions must be greater than zero.\n");
-
-    do
-    {
-        printf("Enter matrix length: ");
-        ssize_t n_chars_read = getline(&buffer, &buffer_size, stdin);
-
-        value = (int)strtol(buffer, &chk, 10);
-        if (!isspace(*chk) && *chk != 0)
-        {
-            printf("Error: Invalid input. Try again\n");
-        }
-        else if (value <= 0)
-        {
-            printf("Error: Length must be positive. Try again\n");
-            ++positive_checker;
-        }
-        --positive_checker;
-    } while (!isspace(*chk) && *chk != 0 || !positive_checker);
-    tempMatrix.length = value;
 
     do
     {
@@ -43,17 +24,32 @@ Matrix MatrixInput()
         value = (int)strtol(buffer, &chk, 10);
         if (!isspace(*chk) && *chk != 0)
         {
-            printf("Error: Invalid input. Try again\n");
+            printf("Error: Invalid input. Try again.\n");
         }
         else if (value <= 0)
         {
-            printf("Error: Length must be positive. Try again\n");
-            ++positive_checker;
+            printf("Error: Length must be positive. Try again.\n");
         }
-        --positive_checker;
-    } while (!isspace(*chk) && *chk != 0 || !positive_checker);
+    } while (!isspace(*chk) && *chk != 0 || value <= 0);
     free(buffer);
     tempMatrix.height = value;
+
+    do
+    {
+        printf("Enter matrix length: ");
+        ssize_t n_chars_read = getline(&buffer, &buffer_size, stdin);
+
+        value = (int)strtol(buffer, &chk, 10);
+        if (!isspace(*chk) && *chk != 0)
+        {
+            printf("Error: Invalid input. Try again.\n");
+        }
+        else if (value <= 0)
+        {
+            printf("Error: Length must be positive. Try again.\n");
+        }
+    } while (!isspace(*chk) && *chk != 0 || value <= 0);
+    tempMatrix.length = value;
 
     tempMatrix.data = malloc(sizeof(Complex) * tempMatrix.height * tempMatrix.length);
 
@@ -63,9 +59,9 @@ Matrix MatrixInput()
         exit(1);
     }
 
-    printf("Size of matrix: %d x %d\n", tempMatrix.height, tempMatrix.length);
+    printf("\nSize of matrix: %d x %d\n\n", tempMatrix.height, tempMatrix.length);
     printf("Matrix Input\n");
-    printf("---------------\n");
+    printf("------------\n");
     printf("Input rules:\n");
     printf("- Enter real numbers (e.g., 5.2) or complex numbers (e.g., (3.5, 4))\n");
 
@@ -83,8 +79,7 @@ Matrix MatrixInput()
             else if (scanf("(%lf,%lf)", &num.real, &num.imaginary) != 2)
             {
                 printf("Error: Invalid format. Try again.\n");
-                while (getchar() != '\n')
-                    ;
+                clear_input_buffer();
                 continue;
             }
             break;
@@ -93,6 +88,7 @@ Matrix MatrixInput()
         counter++;
     }
 
+    clear_input_buffer();
     return tempMatrix;
 }
 
@@ -100,7 +96,7 @@ void MatrixOutput(Matrix matrix)
 {
     if (matrix.data == NULL)
     {
-        printf("Error: Invalid matrix\n");
+        printf("Error: Invalid matrix.\n");
         return;
     }
 
@@ -122,13 +118,37 @@ void MatrixOutput(Matrix matrix)
     }
 }
 
-void MatrixFree(Matrix *matrix)
+Matrix MatrixSum(Matrix a, Matrix b)
 {
-    if (matrix->data != NULL)
+    Matrix tempMatrix = {0, 0, NULL};
+    tempMatrix.height = a.height;
+    tempMatrix.length = a.length;
+    tempMatrix.data = malloc(sizeof(Complex) * a.height * a.length);
+    for (int i = 0; i < a.height; ++i)
     {
-        free(matrix->data);
-        matrix->data = NULL;
+        for (int j = 0; j < b.length; ++j)
+        {
+            tempMatrix.data[i * a.length + j] = ComplexSum(a.data[i * a.length + j], b.data[i * a.length + j], 1);
+        }
     }
-    matrix->length = 0;
-    matrix->height = 0;
+
+    return tempMatrix;
+}
+
+void MatrixFree(Matrix *mat)
+{
+    if (mat && mat->data)
+    {
+        free(mat->data);
+        mat->data = NULL; // Prevent double free
+        mat->height = 0;
+        mat->length = 0;
+    }
+}
+
+void clear_input_buffer()
+{
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF)
+        ;
 }

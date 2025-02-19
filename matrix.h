@@ -7,6 +7,9 @@ typedef struct Matrix
     Complex *data;
 } Matrix;
 
-Matrix MatrixInput();
+Matrix MatrixInput(void);
 void MatrixOutput(Matrix matrix);
 void MatrixFree(Matrix *matrix);
+Matrix MatrixSum(Matrix a, Matrix b);
+
+void clear_input_buffer();

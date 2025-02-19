@@ -7,10 +7,10 @@ obj := $(src:%.h=%.o)
 all: launch
 
 run:
-	./lab.exe
+	./lab
 
 clean:
-	cmd /C del /Q *.exe *.o
+	rm -f *.exe *.o
 
 %.o: %.c $(head)
 	gcc -c -o $@ $<
