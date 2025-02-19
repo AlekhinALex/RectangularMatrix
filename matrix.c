@@ -79,7 +79,7 @@ Matrix MatrixInput()
             else if (scanf("(%lf,%lf)", &num.real, &num.imaginary) != 2)
             {
                 printf("Error: Invalid format. Try again.\n");
-                clear_input_buffer();
+                ClearInputBuffer();
                 continue;
             }
             break;
@@ -88,7 +88,7 @@ Matrix MatrixInput()
         counter++;
     }
 
-    clear_input_buffer();
+    ClearInputBuffer();
     return tempMatrix;
 }
 
@@ -124,9 +124,9 @@ Matrix MatrixSum(Matrix a, Matrix b)
     tempMatrix.height = a.height;
     tempMatrix.length = a.length;
     tempMatrix.data = malloc(sizeof(Complex) * a.height * a.length);
-    for (int i = 0; i < a.height; ++i)
+    for (int i = 0; i < a.height; i++)
     {
-        for (int j = 0; j < b.length; ++j)
+        for (int j = 0; j < b.length; j++)
         {
             tempMatrix.data[i * a.length + j] = ComplexSum(a.data[i * a.length + j], b.data[i * a.length + j], 1);
         }
@@ -135,18 +135,40 @@ Matrix MatrixSum(Matrix a, Matrix b)
     return tempMatrix;
 }
 
+Matrix MatrixMultiplyByMatrix(Matrix a, Matrix b)
+{
+    Matrix tempMatrix = {0, 0, NULL};
+    tempMatrix.height = a.height;
+    tempMatrix.length = b.length;
+    tempMatrix.data = malloc(sizeof(Complex) * a.height * b.length);
+    for (int i = 0; i < tempMatrix.height; i++)
+    {
+        for (int j = 0; j < tempMatrix.length; j++)
+        {
+            Complex newElem = {0.0, 0.0};
+            for (int k = 0; k < a.length; k++)
+            {
+                Complex mult1 = ComplexMultiplyByComplex(a.data[i * a.length + k], b.data[k * b.length + j]);
+                newElem = ComplexSum(newElem, mult1, 1);
+            }
+            tempMatrix.data[i * tempMatrix.length + j] = newElem;
+        }
+    }
+    return tempMatrix;
+}
+
 void MatrixFree(Matrix *mat)
 {
     if (mat && mat->data)
     {
         free(mat->data);
-        mat->data = NULL; // Prevent double free
+        mat->data = NULL;
         mat->height = 0;
         mat->length = 0;
     }
 }
 
-void clear_input_buffer()
+void ClearInputBuffer()
 {
     int c;
     while ((c = getchar()) != '\n' && c != EOF)

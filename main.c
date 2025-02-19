@@ -10,8 +10,10 @@ int main()
     char *command = NULL;
     size_t command_size = 0;
     char *chk_command;
-    printf("Menu\n");
-    printf("-----\n");
+
+    printf("=========================================================\n");
+    printf("\tMenu\n");
+    printf("=========================================================\n");
     printf("1) Sum of two matrices\n");
     printf("2) Multiplication of two matrices\n");
     printf("3) Matrix transposition\n");
@@ -32,14 +34,15 @@ int main()
 
     switch (choice)
     {
-    case 1:
+    case 1: // Matrix + Matrix
     {
         Matrix mat1_1 = {0, 0, NULL};
         Matrix mat2_1 = {0, 0, NULL};
         Matrix matSum_1 = {0, 0, NULL};
         while (1)
         {
-            printf("\n--------------------\n");
+            printf("\nMatrix addition(A + B)\n");
+            printf("--------------------\n");
             printf("Enter first matrix: \n");
             printf("--------------------\n");
             mat1_1 = MatrixInput();
@@ -75,8 +78,49 @@ int main()
     }
     break;
     case 2:
+    {
+        Matrix mat1_2 = {0, 0, NULL};
+        Matrix mat2_2 = {0, 0, NULL};
+        Matrix matMulti = {0, 0, NULL};
+        while (1)
+        {
+            printf("\nMatrix Multiplication (A × B)\n");
+            printf("--------------------\n");
+            printf("Enter first matrix: \n");
+            printf("--------------------\n");
+            mat1_2 = MatrixInput();
+            printf("\n--------------------\n");
+            printf("Enter second matrix: \n");
+            printf("--------------------\n");
+            mat2_2 = MatrixInput();
+            if (mat1_2.length != mat2_2.height)
+            {
+                printf("\n=========================================================\n");
+                printf("Error: The number of columns of the first matrix must be\nequal to the number of rows of the second matrix.\nTry again.\n");
+                printf("=========================================================\n");
+                MatrixFree(&mat1_2);
+                MatrixFree(&mat2_2);
+                continue;
+            }
+            else
+            {
+                break;
+            }
+        }
 
-        break;
+        matMulti = MatrixMultiplyByMatrix(mat1_2, mat2_2);
+
+        printf("\n--------------------\n");
+        printf("Result matrix:\n");
+        printf("--------------------\n");
+
+        MatrixOutput(matMulti);
+
+        MatrixFree(&mat1_2);
+        MatrixFree(&mat2_2);
+        MatrixFree(&matMulti);
+    }
+    break;
     case 3: // Matrix transposition
     {
         Matrix mat3 = MatrixInput();
