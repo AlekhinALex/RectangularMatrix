@@ -5,7 +5,6 @@ typedef enum
     INT,
     DOUBLE,
     COMPLEX
-
 } datatype;
 
 typedef void (*Addition)(const void *a, const void *b, void *result);
