@@ -5,21 +5,6 @@
 #include "../inc/double.h"
 #include "../inc/typeInfoDouble.h"
 
-static double oneGlobalConstant;
-static double zeroGlobalConstant;
-
-// const void *oneDouble()
-// {
-//     oneGlobalConstant.value = 1.0;
-//     return &oneGlobalConstant;
-// }
-
-const void *zeroDouble()
-{
-    zeroGlobalConstant = 0.0;
-    return &zeroGlobalConstant;
-}
-
 void addDouble(const void *a, const void *b, void *result)
 {
     double *sumDouble = (double *)result;
@@ -88,7 +73,6 @@ const struct TypeInfo *getTypeInfoDouble()
         doubleType->print = printDouble;
         doubleType->size = sizeof(double);
         doubleType->Free = freeDouble;
-        doubleType->zero = zeroDouble;
     }
     return doubleType;
 };

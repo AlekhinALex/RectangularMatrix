@@ -18,3 +18,4 @@ void printMatrix(const Matrix *matrix);
 void freeMatrix(Matrix *matrix);
 void setupMatrixElements(Matrix *matrix, int isComplex);
 void transportMatrix(Matrix *matrix);
+void checkComponentsTypes(const Matrix *matrix1, const Matrix *matrix2);

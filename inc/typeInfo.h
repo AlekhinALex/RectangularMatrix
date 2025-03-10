@@ -15,7 +15,6 @@ typedef void *(*Allocation)(datatype type);
 typedef void (*Print)(const void *elemenet);
 typedef void (*Free)(void *element);
 typedef void (*Size)();
-typedef const void *(*Constant)();
 
 typedef struct TypeInfo
 {
@@ -27,5 +26,4 @@ typedef struct TypeInfo
     Print print;
     Free Free;
     size_t size;
-    Constant zero;
 } TypeInfo;

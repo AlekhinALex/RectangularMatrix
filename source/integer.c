@@ -5,28 +5,6 @@
 #include "../inc/integer.h"
 #include "../inc/typeInfoInteger.h"
 
-static int oneGlobalConstant;
-static int zeroGlobalConstant;
-
-static int typeInfoPointer;
-
-const void *getTypePointer()
-{
-    return &typeInfoPointer;
-}
-
-const void *oneInteger()
-{
-    oneGlobalConstant = 1;
-    return &oneGlobalConstant;
-}
-
-const void *zeroInteger()
-{
-    zeroGlobalConstant = 0;
-    return &zeroGlobalConstant;
-}
-
 void addInteger(const void *a, const void *b, void *result)
 {
     int *sumInt = (int *)result;
@@ -36,11 +14,6 @@ void addInteger(const void *a, const void *b, void *result)
 
     *sumInt = *arg1 + *arg2;
 }
-
-// void additionForInteger(const void *a, const void *b, void *result, BinaryOperator functionName)
-// {
-//     functionName(a, b, result);
-// }
 
 void subInteger(const void *a, const void *b, void *result)
 {
@@ -52,11 +25,6 @@ void subInteger(const void *a, const void *b, void *result)
     *sumInt = *arg1 - *arg2;
 }
 
-// void substractionForInteger(const void *a, const void *b, void *result, BinaryOperator functionName)
-// {
-//     functionName(a, b, result);
-// }
-
 void multiplyInteger(const void *a, const void *b, void *result)
 {
     int *intA = (int *)a;
@@ -65,11 +33,6 @@ void multiplyInteger(const void *a, const void *b, void *result)
 
     (*intResult) = (*intA) * (*intB);
 }
-
-// void multiplicationForInteger(const void *a, const void *b, void *result, BinaryOperator functionName)
-// {
-//     functionName(a, b, result);
-// }
 
 //? Is really needed?
 void assignInteger(void *destination, const void *source)
@@ -113,7 +76,6 @@ const struct TypeInfo *getTypeInfoInt()
         typeInfo->size = sizeof(int);
         typeInfo->print = printInteger;
         typeInfo->Free = freeInteger;
-        typeInfo->zero = zeroInteger;
     }
     return typeInfo;
 };

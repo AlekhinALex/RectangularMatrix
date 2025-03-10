@@ -9,18 +9,24 @@
 #include "../inc/matrix.h"
 #include "../inc/inputHandling.h"
 
+void checkComponentsTypes(const Matrix *matrix1, const Matrix *matrix2)
+{
+    if (matrix1->typeComponents != matrix2->typeComponents)
+    {
+        printf("Error: Matrices must have identicals types. Try again.\n");
+        return;
+    }
+}
+
 void addMatrix(const Matrix *matrix1, const Matrix *matrix2, Matrix *result)
 {
 
     if (matrix1->height != matrix2->height || matrix1->length != matrix2->length)
     {
-        printf("Error: Matrices must have identicals sizes. Try again.\n"); // TODO: as a func
+        printf("Error: Matrices must have identicals sizes. Try again.\n");
         return;
     }
-    else if (matrix1->typeComponents != matrix2->typeComponents)
-    {
-        printf("Error: Matrices must have identicals types. Try again.\n"); // TODO: as a func
-    }
+    checkComponentsTypes(matrix1, matrix2);
 
     result->height = matrix1->height;
     result->length = matrix1->length;
@@ -46,19 +52,15 @@ void multiplyMatrix(const Matrix *matrix1, const Matrix *matrix2, Matrix *result
     if (matrix1->length != matrix2->height)
     {
         printf("Error: Incompatible matrix dimensions for multiplication: %ux%u and %ux%u\n",
-               matrix1->height, matrix1->length, matrix2->height, matrix2->length); //? TODO: ass a func
+               matrix1->height, matrix1->length, matrix2->height, matrix2->length);
         return;
     }
+
+    checkComponentsTypes(matrix1, matrix2);
 
     result->height = matrix1->height;
     result->length = matrix2->length;
     result->typeComponents = matrix1->typeComponents;
-
-    if (matrix1->typeComponents != matrix2->typeComponents || matrix1->typeComponents != result->typeComponents)
-    {
-        printf("Error: Matrices have different types\n"); // TODO: as func
-        return;
-    }
 
     result->typeInfo = matrix1->typeInfo;
     void *temp = NULL;
@@ -90,7 +92,6 @@ void multiplyMatrix(const Matrix *matrix1, const Matrix *matrix2, Matrix *result
                 const void *elemA = matrix1->data[i * matrix1->length + k];
                 const void *elemB = matrix2->data[k * matrix2->length + j];
                 void *elemResult = result->data[i * result->length + j];
-                result->typeInfo->print(&elemResult);
                 // a[i][k] * b[k][j]
                 result->typeInfo->multiply(elemA, elemB, temp);
                 result->typeInfo->add(elemResult, temp, elemResult);
@@ -178,7 +179,6 @@ void inputMatrix(Matrix *matrix)
     printf("Matrix Input\n");
     printf("------------\n");
 
-    // 0 - not complex, 1 - DOUBLE in complex, 2 - INT in complex
     int complexChoice = 0;
     switch (typeHolder)
     {
@@ -267,9 +267,10 @@ void inputMatrix(Matrix *matrix)
                         value->real = malloc(sizeof(double));
                         value->imaginary = malloc(sizeof(double));
 
+                        //! NOT WORKING or does it?
                         if (scanf(" (%lf, %lf)", &tempReal, &tempImaginary) != 2)
                         {
-
+                            printf("WHAT I SEE: %lf and %lf\n", tempReal, tempImaginary);
                             invalidInput();
                             clearInputBuffer();
                         }

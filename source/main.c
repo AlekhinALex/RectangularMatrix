@@ -3,6 +3,11 @@
 #include "../inc/matrix.h"
 #include "../inc/inputHandling.h"
 
+// TODO: Improve error handling
+// TODO: ADD - read command choice until exit
+// TODO: ADD - null ptr handling
+// TODO: CHECK - double input (complex and mere double)
+
 void printMenu();
 
 int main()
@@ -23,12 +28,12 @@ int main()
         printf("First matrix: \n");
         printf("--------------------\n\n");
         inputMatrix(m1);
-        printMatrix(m1); //? REMOVE
+
         printf("\n--------------------\n");
         printf("Enter second matrix: \n");
         printf("--------------------\n\n");
         inputMatrix(m2);
-        printMatrix(m2); //? REMOVE
+
         addMatrix(m1, m2, result);
         printMatrix(result);
 
@@ -48,12 +53,11 @@ int main()
         printf("First matrix: \n");
         printf("--------------------\n\n");
         inputMatrix(m1);
-        printMatrix(m1); //? REMOVE
+
         printf("\n--------------------\n");
         printf("Enter second matrix: \n");
         printf("--------------------\n\n");
         inputMatrix(m2);
-        printMatrix(m2); //? REMOVE
 
         multiplyMatrix(m1, m2, result);
         printf("\n");
@@ -75,6 +79,8 @@ int main()
         inputMatrix(m);
         transportMatrix(m);
         printMatrix(m);
+
+        freeMatrix(m);
     }
     break;
     case 4:
@@ -98,10 +104,9 @@ void printMenu()
 }
 
 /*
-(1,2)
-(3, -1)
-(0,4)
-(5,6)
+Add
+(1,2) (3, -1)
+(0,4) (5,6)
 
 (2, -1) (1, 3)
 (0,-2) (3, -4)
