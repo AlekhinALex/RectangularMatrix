@@ -13,81 +13,144 @@ void printMenu();
 int main()
 {
     int choice;
-    printMenu();
-    choice = getChoice(1, 4);
-    switch (choice)
+    int continueToWork = 1;
+    while (continueToWork)
     {
-    case 1: // Matrix addition
-    {
-        Matrix *m1 = malloc(sizeof(Matrix));
-        Matrix *m2 = malloc(sizeof(Matrix));
-        Matrix *result = malloc(sizeof(Matrix));
+        printMenu();
+        choice = getChoice(1, 4);
 
-        printf("\nMatrix addition(A + B)\n");
-        printf("--------------------\n");
-        printf("First matrix: \n");
-        printf("--------------------\n\n");
-        inputMatrix(m1);
+        switch (choice)
+        {
+        case 1: // Matrix addition
+        {
+            Matrix *m1 = malloc(sizeof(Matrix));
+            Matrix *m2 = malloc(sizeof(Matrix));
+            Matrix *result = malloc(sizeof(Matrix));
 
-        printf("\n--------------------\n");
-        printf("Enter second matrix: \n");
-        printf("--------------------\n\n");
-        inputMatrix(m2);
+            printf("\nMatrix addition(A + B)\n");
+            printf("--------------------\n");
+            printf("First matrix: \n");
+            printf("--------------------\n\n");
 
-        addMatrix(m1, m2, result);
-        printMatrix(result);
+            if (inputMatrix(m1) == 0)
+            {
+                freeMatrix(m1);
+                freeMatrix(m2);
+                freeMatrix(result);
+                break;
+            }
 
-        freeMatrix(m1);
-        freeMatrix(m2);
-        freeMatrix(result);
-    }
-    break;
+            printf("\n--------------------\n");
+            printf("Enter second matrix: \n");
+            printf("--------------------\n\n");
 
-    case 2: // Matrix multiplication
-    {
-        Matrix *m1 = malloc(sizeof(Matrix));
-        Matrix *m2 = malloc(sizeof(Matrix));
-        Matrix *result = malloc(sizeof(Matrix));
-        printf("\nMatrix Multiplication (A × B)\n");
-        printf("--------------------\n");
-        printf("First matrix: \n");
-        printf("--------------------\n\n");
-        inputMatrix(m1);
+            if (inputMatrix(m2) == 0)
+            {
+                freeMatrix(m1);
+                freeMatrix(m2);
+                freeMatrix(result);
+                break;
+            }
 
-        printf("\n--------------------\n");
-        printf("Enter second matrix: \n");
-        printf("--------------------\n\n");
-        inputMatrix(m2);
+            if (addMatrix(m1, m2, result) == 0)
+            {
+                printf("Failed to add matrices\n");
+            }
+            else
+            {
+                printf("\nResult matrix:\n");
+                printf("--------------------\n");
+                printMatrix(result);
+            }
 
-        multiplyMatrix(m1, m2, result);
-        printf("\n");
-        printMatrix(result);
-
-        freeMatrix(m1);
-        freeMatrix(m2);
-        freeMatrix(result);
-    }
-    break;
+            freeMatrix(m1);
+            freeMatrix(m2);
+            freeMatrix(result);
+        }
         break;
-    case 3: // Matrix transposition
-    {
-        Matrix *m = malloc(sizeof(Matrix));
-        printf("\nMatrix Transposition\n");
-        printf("--------------------\n");
-        printf("Enter matrix: \n");
-        printf("--------------------\n\n");
-        inputMatrix(m);
-        transportMatrix(m);
-        printMatrix(m);
 
-        freeMatrix(m);
-    }
-    break;
-    case 4:
+        case 2: // Matrix multiplication
+        {
+            Matrix *m1 = malloc(sizeof(Matrix));
+            Matrix *m2 = malloc(sizeof(Matrix));
+            Matrix *result = malloc(sizeof(Matrix));
+            printf("\nMatrix Multiplication (A × B)\n");
+            printf("--------------------\n");
+            printf("First matrix: \n");
+            printf("--------------------\n\n");
+
+            if (inputMatrix(m1) == 0)
+            {
+                freeMatrix(m1);
+                freeMatrix(m2);
+                freeMatrix(result);
+                break;
+            }
+
+            printf("\n--------------------\n");
+            printf("Enter second matrix: \n");
+            printf("--------------------\n\n");
+
+            if (inputMatrix(m2) == 0)
+            {
+                freeMatrix(m1);
+                freeMatrix(m2);
+                freeMatrix(result);
+                break;
+            }
+
+            if (multiplyMatrix(m1, m2, result) == 0)
+            {
+                printf("Failed to multiply matrices\n");
+            }
+            else
+            {
+                printf("\nResult matrix:\n");
+                printf("--------------------\n");
+                printMatrix(result);
+            }
+
+            freeMatrix(m1);
+            freeMatrix(m2);
+            freeMatrix(result);
+        }
         break;
-    default:
-        printf("Unexpected error: Invalid choice.\n");
+            break;
+        case 3: // Matrix transposition
+        {
+            Matrix *m = malloc(sizeof(Matrix));
+            printf("\nMatrix Transposition\n");
+            printf("--------------------\n");
+            printf("Enter matrix: \n");
+            printf("--------------------\n\n");
+
+            if (inputMatrix(m) == 0)
+            {
+                freeMatrix(m);
+                break;
+            }
+
+            if (transportMatrix(m) == 0)
+            {
+                printf("Failed to transpose matrix\n");
+            }
+            else
+            {
+                printf("\nTransposed matrix:\n");
+                printf("--------------------\n");
+                printMatrix(m);
+            }
+
+            freeMatrix(m);
+        }
         break;
+        case 4:
+            continueToWork = 0;
+            break;
+        default:
+            printf("Unexpected error: Invalid choice.\n");
+            break;
+        }
     }
     return 0;
 }
@@ -113,8 +176,10 @@ Add
 
 
 Multi
-(1,1) (2,-3) (0, 3) (4, 2)
+(1,1) (2,-3)
+(0, 3) (4, 2)
 
-(2,-1) (1,2) (-1, 1) (3, -1)
+(2,-1) (1,2)
+(-1, 1) (3, -1)
 
 */

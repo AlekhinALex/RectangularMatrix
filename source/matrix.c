@@ -7,26 +7,19 @@
 #include "../inc/double.h"
 #include "../inc/complex.h"
 #include "../inc/matrix.h"
+#include "../inc/errorHandling.h"
 #include "../inc/inputHandling.h"
 
-void checkComponentsTypes(const Matrix *matrix1, const Matrix *matrix2)
+int addMatrix(const Matrix *matrix1, const Matrix *matrix2, Matrix *result)
 {
-    if (matrix1->typeComponents != matrix2->typeComponents)
+    // error handling
+    if (isNullMatrix(matrix1) ||
+        isNullMatrix(matrix2) ||
+        !areMatricesCompatibleTypes(matrix1, matrix2) ||
+        !areMatricesSameSize(matrix1, matrix2))
     {
-        printf("Error: Matrices must have identicals types. Try again.\n");
-        return;
+        return ERROR_OCCURED;
     }
-}
-
-void addMatrix(const Matrix *matrix1, const Matrix *matrix2, Matrix *result)
-{
-
-    if (matrix1->height != matrix2->height || matrix1->length != matrix2->length)
-    {
-        printf("Error: Matrices must have identicals sizes. Try again.\n");
-        return;
-    }
-    checkComponentsTypes(matrix1, matrix2);
 
     result->height = matrix1->height;
     result->length = matrix1->length;
@@ -45,18 +38,20 @@ void addMatrix(const Matrix *matrix1, const Matrix *matrix2, Matrix *result)
                                   result->data[i * matrix1->length + j]);
         }
     }
+
+    return SUCCESSFUL_EXECUTION;
 }
 
-void multiplyMatrix(const Matrix *matrix1, const Matrix *matrix2, Matrix *result)
+int multiplyMatrix(const Matrix *matrix1, const Matrix *matrix2, Matrix *result)
 {
-    if (matrix1->length != matrix2->height)
+    // error handling
+    if (isNullMatrix(matrix1) ||
+        isNullMatrix(matrix2) ||
+        !areMatricesCompatibleForMultiplication(matrix1, matrix2) ||
+        !areMatricesCompatibleTypes(matrix1, matrix2))
     {
-        printf("Error: Incompatible matrix dimensions for multiplication: %ux%u and %ux%u\n",
-               matrix1->height, matrix1->length, matrix2->height, matrix2->length);
-        return;
+        return ERROR_OCCURED;
     }
-
-    checkComponentsTypes(matrix1, matrix2);
 
     result->height = matrix1->height;
     result->length = matrix2->length;
@@ -64,7 +59,11 @@ void multiplyMatrix(const Matrix *matrix1, const Matrix *matrix2, Matrix *result
 
     result->typeInfo = matrix1->typeInfo;
     void *temp = NULL;
-    allocateMatrixElements(result, matrix1);
+
+    if (allocateMatrixElements(result, matrix1))
+    {
+        return ERROR_OCCURED;
+    }
 
     if (result->typeComponents == COMPLEX)
     {
@@ -100,21 +99,22 @@ void multiplyMatrix(const Matrix *matrix1, const Matrix *matrix2, Matrix *result
     }
 
     result->typeInfo->Free(temp);
+
+    return SUCCESSFUL_EXECUTION;
 }
 
-void allocateMatrixElements(Matrix *matrixDest, const Matrix *matrixSrc)
+int allocateMatrixElements(Matrix *matrixDest, const Matrix *matrixSrc)
 {
-    if (!matrixDest || !matrixSrc)
+    if (isNullMatrix(matrixDest) ||
+        isNullMatrix(matrixSrc))
     {
-        printf("Error: NULL matrix pointer\n");
-        return;
+        return ERROR_OCCURED;
     }
 
     matrixDest->data = malloc(matrixDest->height * matrixDest->length * sizeof(void *));
 
     for (int i = 0; i < matrixDest->height * matrixDest->length; i++)
     {
-
         if (matrixDest->typeComponents == COMPLEX)
         {
             Complex *srcElement = (Complex *)matrixSrc->data[0];
@@ -130,9 +130,11 @@ void allocateMatrixElements(Matrix *matrixDest, const Matrix *matrixSrc)
             matrixDest->data[i] = matrixDest->typeInfo->allocate(matrixDest->typeComponents);
         }
     }
+
+    return SUCCESSFUL_EXECUTION;
 }
 
-void inputMatrix(Matrix *matrix)
+int inputMatrix(Matrix *matrix)
 {
 
     matrix->data = NULL;
@@ -316,6 +318,8 @@ void inputMatrix(Matrix *matrix)
         }
     }
     clearInputBuffer();
+
+    return SUCCESSFUL_EXECUTION;
 }
 
 /// @brief AutoInitializing
@@ -345,8 +349,13 @@ void setupMatrixElements(Matrix *matrix, int complexChoice)
     }
 }
 
-void transportMatrix(Matrix *matrix)
+int transportMatrix(Matrix *matrix)
 {
+    if (isNullMatrix(matrix))
+    {
+        return ERROR_OCCURED;
+    }
+
     void **tempData = malloc(matrix->height * matrix->length * sizeof(void *));
 
     for (int i = 0; i < matrix->height * matrix->length; i++)
@@ -368,6 +377,8 @@ void transportMatrix(Matrix *matrix)
     }
 
     free(tempData);
+
+    return SUCCESSFUL_EXECUTION;
 }
 
 void freeMatrix(Matrix *matrix)
