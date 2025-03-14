@@ -1,7 +1,7 @@
 #pragma once
 #include "matrix.h"
 
-#define ERROR_OCCURED 0
+#define ERROR_OCCURRED 0
 #define SUCCESSFUL_EXECUTION 1
 
 int isNullMatrix(const Matrix *matrix);
