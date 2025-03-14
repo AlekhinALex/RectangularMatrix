@@ -3,11 +3,6 @@
 #include "../inc/matrix.h"
 #include "../inc/inputHandling.h"
 
-// TODO: Improve error handling
-// TODO: ADD - read command choice until exit
-// TODO: ADD - null ptr handling
-// TODO: CHECK - double input (complex and mere double)
-
 void printMenu();
 
 int main()
@@ -54,7 +49,10 @@ int main()
 
             if (addMatrix(m1, m2, result) == 0)
             {
-                printf("Failed to add matrices\n");
+                printMatrix(m1);
+                printMatrix(m2);
+                printMatrix(result);
+                printf("Failed to add matrices\n\n");
             }
             else
             {
@@ -101,7 +99,7 @@ int main()
 
             if (multiplyMatrix(m1, m2, result) == 0)
             {
-                printf("Failed to multiply matrices\n");
+                printf("Failed to multiply matrices\n\n");
             }
             else
             {
@@ -132,7 +130,7 @@ int main()
 
             if (transportMatrix(m) == 0)
             {
-                printf("Failed to transpose matrix\n");
+                printf("Failed to transpose matrix\n\n");
             }
             else
             {

@@ -15,8 +15,8 @@ int addMatrix(const Matrix *matrix1, const Matrix *matrix2, Matrix *result)
     // error handling
     if (isNullMatrix(matrix1) ||
         isNullMatrix(matrix2) ||
-        !areMatricesCompatibleTypes(matrix1, matrix2) ||
-        !areMatricesSameSize(matrix1, matrix2))
+        areMatricesCompatibleTypes(matrix1, matrix2) ||
+        areMatricesSameSize(matrix1, matrix2))
     {
         return ERROR_OCCURED;
     }
@@ -26,7 +26,22 @@ int addMatrix(const Matrix *matrix1, const Matrix *matrix2, Matrix *result)
     result->typeComponents = matrix1->typeComponents;
     result->typeInfo = matrix1->typeInfo;
 
-    allocateMatrixElements(result, matrix1);
+    if (result->typeComponents == COMPLEX)
+    {
+        // Checking if complex numbers have same types inside
+        Complex *elem1 = (Complex *)matrix1->data[0];
+        Complex *elem2 = (Complex *)matrix2->data[0];
+
+        if (elem1->type != elem2->type)
+        {
+            return ERROR_OCCURED;
+        }
+    }
+
+    if (allocateMatrixElements(result, matrix1) != SUCCESSFUL_EXECUTION)
+    {
+        return ERROR_OCCURED;
+    }
 
     // matrix addition
     for (int i = 0; i < matrix1->height; i++)
@@ -47,8 +62,8 @@ int multiplyMatrix(const Matrix *matrix1, const Matrix *matrix2, Matrix *result)
     // error handling
     if (isNullMatrix(matrix1) ||
         isNullMatrix(matrix2) ||
-        !areMatricesCompatibleForMultiplication(matrix1, matrix2) ||
-        !areMatricesCompatibleTypes(matrix1, matrix2))
+        areMatricesCompatibleForMultiplication(matrix1, matrix2) ||
+        areMatricesCompatibleTypes(matrix1, matrix2))
     {
         return ERROR_OCCURED;
     }
@@ -60,7 +75,19 @@ int multiplyMatrix(const Matrix *matrix1, const Matrix *matrix2, Matrix *result)
     result->typeInfo = matrix1->typeInfo;
     void *temp = NULL;
 
-    if (allocateMatrixElements(result, matrix1))
+    if (result->typeComponents == COMPLEX)
+    {
+        // Checking if complex numbers have same types inside
+        Complex *elem1 = (Complex *)matrix1->data[0];
+        Complex *elem2 = (Complex *)matrix2->data[0];
+
+        if (elem1->type != elem2->type)
+        {
+            return ERROR_OCCURED;
+        }
+    }
+
+    if (allocateMatrixElements(result, matrix1) != SUCCESSFUL_EXECUTION)
     {
         return ERROR_OCCURED;
     }
@@ -105,8 +132,7 @@ int multiplyMatrix(const Matrix *matrix1, const Matrix *matrix2, Matrix *result)
 
 int allocateMatrixElements(Matrix *matrixDest, const Matrix *matrixSrc)
 {
-    if (isNullMatrix(matrixDest) ||
-        isNullMatrix(matrixSrc))
+    if (isNullMatrix(matrixSrc))
     {
         return ERROR_OCCURED;
     }
@@ -269,7 +295,6 @@ int inputMatrix(Matrix *matrix)
                         value->real = malloc(sizeof(double));
                         value->imaginary = malloc(sizeof(double));
 
-                        //! NOT WORKING or does it?
                         if (scanf(" (%lf, %lf)", &tempReal, &tempImaginary) != 2)
                         {
                             printf("WHAT I SEE: %lf and %lf\n", tempReal, tempImaginary);
@@ -345,6 +370,10 @@ void setupMatrixElements(Matrix *matrix, int complexChoice)
         else if (complexChoice == 0)
         {
             matrix->data[i] = matrix->typeInfo->allocate(matrix->typeComponents);
+        }
+        else
+        {
+            printf("Uknown type to setup matrix elements\n");
         }
     }
 }
