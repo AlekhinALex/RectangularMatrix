@@ -18,7 +18,7 @@ int addMatrix(const Matrix *matrix1, const Matrix *matrix2, Matrix *result)
         areMatricesCompatibleTypes(matrix1, matrix2) ||
         areMatricesSameSize(matrix1, matrix2))
     {
-        return ERROR_OCCURED;
+        return ERROR_OCCURRED;
     }
 
     result->height = matrix1->height;
@@ -34,13 +34,13 @@ int addMatrix(const Matrix *matrix1, const Matrix *matrix2, Matrix *result)
 
         if (elem1->type != elem2->type)
         {
-            return ERROR_OCCURED;
+            return ERROR_OCCURRED;
         }
     }
 
     if (allocateMatrixElements(result, matrix1) != SUCCESSFUL_EXECUTION)
     {
-        return ERROR_OCCURED;
+        return ERROR_OCCURRED;
     }
 
     // matrix addition
@@ -65,7 +65,7 @@ int multiplyMatrix(const Matrix *matrix1, const Matrix *matrix2, Matrix *result)
         areMatricesCompatibleForMultiplication(matrix1, matrix2) ||
         areMatricesCompatibleTypes(matrix1, matrix2))
     {
-        return ERROR_OCCURED;
+        return ERROR_OCCURRED;
     }
 
     result->height = matrix1->height;
@@ -83,13 +83,13 @@ int multiplyMatrix(const Matrix *matrix1, const Matrix *matrix2, Matrix *result)
 
         if (elem1->type != elem2->type)
         {
-            return ERROR_OCCURED;
+            return ERROR_OCCURRED;
         }
     }
 
     if (allocateMatrixElements(result, matrix1) != SUCCESSFUL_EXECUTION)
     {
-        return ERROR_OCCURED;
+        return ERROR_OCCURRED;
     }
 
     if (result->typeComponents == COMPLEX)
@@ -134,7 +134,7 @@ int allocateMatrixElements(Matrix *matrixDest, const Matrix *matrixSrc)
 {
     if (isNullMatrix(matrixSrc))
     {
-        return ERROR_OCCURED;
+        return ERROR_OCCURRED;
     }
 
     matrixDest->data = malloc(matrixDest->height * matrixDest->length * sizeof(void *));
@@ -382,7 +382,7 @@ int transportMatrix(Matrix *matrix)
 {
     if (isNullMatrix(matrix))
     {
-        return ERROR_OCCURED;
+        return ERROR_OCCURRED;
     }
 
     void **tempData = malloc(matrix->height * matrix->length * sizeof(void *));

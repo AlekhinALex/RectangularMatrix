@@ -18,8 +18,8 @@ void testNullMatrix()
     Matrix *matrix2 = NULL;
     Matrix *result = malloc(sizeof(Matrix));
 
-    assert(addMatrix(matrix1, matrix2, result) == ERROR_OCCURED);
-    assert(multiplyMatrix(matrix1, matrix2, result) == ERROR_OCCURED);
+    assert(addMatrix(matrix1, matrix2, result) == ERROR_OCCURRED);
+    assert(multiplyMatrix(matrix1, matrix2, result) == ERROR_OCCURRED);
 
     freeMatrix(result);
     printf(" - Null matrix handling tests passed\n");
@@ -119,7 +119,7 @@ void testComplexTypeMixing()
     result->height = matrix1->height;
     result->length = matrix1->length;
 
-    assert(addMatrix(matrix1, matrix2, result) == ERROR_OCCURED);
+    assert(addMatrix(matrix1, matrix2, result) == ERROR_OCCURRED);
 
     freeMatrix(matrix1);
     freeMatrix(matrix2);
@@ -234,8 +234,8 @@ void testIncompatibleMatrices()
     setupMatrixElements(matrix1, 0);
     setupMatrixElements(matrix2, 0);
 
-    assert(addMatrix(matrix1, matrix2, result) == ERROR_OCCURED);
-    assert(multiplyMatrix(matrix1, matrix2, result) == ERROR_OCCURED);
+    assert(addMatrix(matrix1, matrix2, result) == ERROR_OCCURRED);
+    assert(multiplyMatrix(matrix1, matrix2, result) == ERROR_OCCURRED);
 
     freeMatrix(matrix1);
     freeMatrix(matrix2);
@@ -348,13 +348,13 @@ void testMixedTypeOperations()
     result->typeComponents = DOUBLE;
     result->typeInfo = getTypeInfoDouble();
     setupMatrixElements(result, 0);
-    assert(addMatrix(intMatrix, doubleMatrix, result) == ERROR_OCCURED);
+    assert(addMatrix(intMatrix, doubleMatrix, result) == ERROR_OCCURRED);
 
     // INT + COMPLEX (should fail)
     result->typeComponents = COMPLEX;
     result->typeInfo = getTypeInfoComplex();
     setupMatrixElements(result, 2);
-    assert(addMatrix(intMatrix, complexMatrix, result) == ERROR_OCCURED);
+    assert(addMatrix(intMatrix, complexMatrix, result) == ERROR_OCCURRED);
 
     freeMatrix(intMatrix);
     freeMatrix(doubleMatrix);
@@ -366,6 +366,8 @@ void testMixedTypeOperations()
 
 int main()
 {
+    system("clear");
+
     printf("\n===Starting matrix tests===\n\n");
 
     testNullMatrix();
@@ -377,6 +379,6 @@ int main()
     testLargeComplexMatrix();
     testMixedTypeOperations();
 
-    printf("\n===RESULT: All tests passed====\n");
+    printf("\n===RESULT: All tests passed====\n\n");
     return 0;
 }
