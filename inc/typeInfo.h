@@ -1,29 +1,20 @@
-#include <stdlib.h>
 #pragma once
-typedef enum
-{
-    INT,
-    DOUBLE,
-    COMPLEX
-} datatype;
 
-typedef void (*Addition)(const void *a, const void *b, void *result);
-typedef void (*Subtraction)(const void *a, const void *b, void *result);
-typedef void (*Multiplication)(const void *a, const void *b, void *result);
-typedef void (*Assign)(void *destination, const void *source);
-typedef void *(*Allocation)(datatype type);
+typedef void (*binaryOperator)(const void *a, const void *b, void *result);
+typedef void *(*Allocation)();
 typedef void (*Print)(const void *elemenet);
 typedef void (*Free)(void *element);
-typedef void (*Size)();
+// typedef void (*GetSize)();
+typedef void *(*Input)();
 
 typedef struct TypeInfo
 {
-    Addition add;
-    Subtraction substract;
-    Assign assign;
-    Multiplication multiply;
+    binaryOperator add;
+    binaryOperator substract;
+    binaryOperator multiply;
+    Input input;
     Allocation allocate;
     Print print;
     Free Free;
-    size_t size;
+    // GetSize size; // Is it really that useful?
 } TypeInfo;

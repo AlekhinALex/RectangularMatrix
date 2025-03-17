@@ -38,12 +38,12 @@ int areMatricesCompatibleForMultiplication(const Matrix *matrix1, const Matrix *
     return PASSED;
 }
 
-int areMatricesCompatibleTypes(const Matrix *matrix1, const Matrix *matrix2)
-{
-    if (matrix1->typeComponents != matrix2->typeComponents)
-    {
-        printf("Error: Matrices must have identical types. Try again.\n");
-        return ERROR_DETECTED;
-    }
-    return PASSED;
-}
+// int areMatricesCompatibleTypes(const Matrix *matrix1, const Matrix *matrix2)
+// {
+//     if (matrix1->typeComponents != matrix2->typeComponents)
+//     {
+//         printf("Error: Matrices must have identical types. Try again.\n");
+//         return ERROR_DETECTED;
+//     }
+//     return PASSED;
+// }

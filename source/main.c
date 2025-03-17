@@ -1,6 +1,11 @@
 #include <stdio.h>
+#include <stdlib.h>
 
+#include "../inc/integer.h"
+#include "../inc/double.h"
+#include "../inc/complex.h"
 #include "../inc/matrix.h"
+
 #include "../inc/inputHandling.h"
 
 void printMenu();

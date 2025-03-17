@@ -34,16 +34,29 @@ void multiplyInteger(const void *a, const void *b, void *result)
     (*intResult) = (*intA) * (*intB);
 }
 
-//? Is really needed?
-void assignInteger(void *destination, const void *source)
+void *readInteger()
 {
-    int *newDest = (int *)destination;
-    int *newSource = (int *)source;
+    int *value = malloc(sizeof(int));
 
-    newDest = newSource;
+    if (scanf("%d", value) != 1)
+    {
+        free(value);
+        return NULL;
+    }
+
+    return value;
 }
 
-void *allocInteger(datatype type)
+//? Is really needed?
+// void assignInteger(void *destination, const void *source)
+// {
+//     int *newDest = (int *)destination;
+//     int *newSource = (int *)source;
+
+//     newDest = newSource;
+// }
+
+void *allocInteger()
 {
     int *newInt = malloc(sizeof(int));
     *newInt = 0;
@@ -69,11 +82,11 @@ const struct TypeInfo *getTypeInfoInt()
     {
         typeInfo = malloc(sizeof(struct TypeInfo));
         typeInfo->allocate = allocInteger;
-        typeInfo->assign = assignInteger;
+        // typeInfo->assign = assignInteger;
         typeInfo->add = addInteger;
         typeInfo->substract = subInteger;
         typeInfo->multiply = multiplyInteger;
-        typeInfo->size = sizeof(int);
+        typeInfo->input = readInteger;
         typeInfo->print = printInteger;
         typeInfo->Free = freeInteger;
     }

@@ -19,12 +19,12 @@ int getChoice(int a, int b)
         {
             perror("Error: Invalid input");
             free(input);
-            exit(1);
+            return -1;
         }
 
-        char *end_ptr;
-        choice = (int)strtol(input, &end_ptr, 10);
-        if (*end_ptr != '\n' && *end_ptr != '\0')
+        char *endPtr;
+        choice = (int)strtol(input, &endPtr, 10);
+        if (*endPtr != '\n' && *endPtr != '\0')
         {
             printf("Error: Please enter a valid number.\n");
         }

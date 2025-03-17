@@ -40,12 +40,32 @@ void assignDouble(void *destination, const void *source)
     newDest = newSource;
 }
 
-void *allocDouble(datatype type)
+void *allocDouble()
 {
     double *newDouble = malloc(sizeof(double));
     *newDouble = 0.0;
     return newDouble;
 }
+
+void *readDouble()
+{
+    double *value = malloc(sizeof(double));
+
+    if (scanf("%lf", value) != 1)
+    {
+        free(value);
+        return NULL;
+    }
+
+    return value;
+}
+
+//!
+// void getSize()
+// {
+//     return sizeof(double);
+// }
+//!
 
 void printDouble(const void *a)
 {
@@ -58,21 +78,22 @@ void freeDouble(void *ptr)
     free(ptr);
 }
 
-static struct TypeInfo *doubleType = NULL;
+static struct TypeInfo *typeInfo = NULL;
 
 const struct TypeInfo *getTypeInfoDouble()
 {
-    if (doubleType == NULL)
+    if (typeInfo == NULL)
     {
-        doubleType = malloc(sizeof(struct TypeInfo));
-        doubleType->allocate = allocDouble;
-        doubleType->assign = assignDouble;
-        doubleType->add = addDouble;
-        doubleType->substract = subDouble;
-        doubleType->multiply = multiplyDouble;
-        doubleType->print = printDouble;
-        doubleType->size = sizeof(double);
-        doubleType->Free = freeDouble;
+        typeInfo = malloc(sizeof(struct TypeInfo));
+        typeInfo->allocate = allocDouble;
+        // typeInfo->assign = assignDouble;
+        typeInfo->add = addDouble;
+        typeInfo->substract = subDouble;
+        typeInfo->multiply = multiplyDouble;
+        typeInfo->print = printDouble;
+        typeInfo->input = readDouble;
+        //! typeInfo->size = getSize;
+        typeInfo->Free = freeDouble;
     }
-    return doubleType;
+    return typeInfo;
 };
