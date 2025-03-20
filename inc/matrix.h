@@ -6,7 +6,7 @@ typedef struct Matrix
     unsigned int length;
     unsigned int height;
     void **data;
-    const TypeInfo *typeInfo;
+    const struct TypeInfo *typeInfo;
 } Matrix;
 
 int addMatrix(const Matrix *matrix1, const Matrix *matrix2, Matrix *result);

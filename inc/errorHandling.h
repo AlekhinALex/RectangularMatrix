@@ -7,4 +7,4 @@
 int isNullMatrix(const Matrix *matrix);
 int areMatricesSameSize(const Matrix *matrix1, const Matrix *matrix2);
 int areMatricesCompatibleForMultiplication(const Matrix *matrix1, const Matrix *matrix2);
-int areMatricesCompatibleTypes(const Matrix *matrix1, const Matrix *matrix2);
+int haveMatchingTypes(const Matrix *matrix1, const Matrix *matrix2);

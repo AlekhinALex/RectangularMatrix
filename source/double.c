@@ -60,13 +60,6 @@ void *readDouble()
     return value;
 }
 
-//!
-// void getSize()
-// {
-//     return sizeof(double);
-// }
-//!
-
 void printDouble(const void *a)
 {
     const double *doubl = (const double *)a;
@@ -86,13 +79,11 @@ const struct TypeInfo *getTypeInfoDouble()
     {
         typeInfo = malloc(sizeof(struct TypeInfo));
         typeInfo->allocate = allocDouble;
-        // typeInfo->assign = assignDouble;
         typeInfo->add = addDouble;
         typeInfo->substract = subDouble;
         typeInfo->multiply = multiplyDouble;
         typeInfo->print = printDouble;
         typeInfo->input = readDouble;
-        //! typeInfo->size = getSize;
         typeInfo->Free = freeDouble;
     }
     return typeInfo;

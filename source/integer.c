@@ -47,15 +47,6 @@ void *readInteger()
     return value;
 }
 
-//? Is really needed?
-// void assignInteger(void *destination, const void *source)
-// {
-//     int *newDest = (int *)destination;
-//     int *newSource = (int *)source;
-
-//     newDest = newSource;
-// }
-
 void *allocInteger()
 {
     int *newInt = malloc(sizeof(int));
@@ -82,7 +73,6 @@ const struct TypeInfo *getTypeInfoInt()
     {
         typeInfo = malloc(sizeof(struct TypeInfo));
         typeInfo->allocate = allocInteger;
-        // typeInfo->assign = assignInteger;
         typeInfo->add = addInteger;
         typeInfo->substract = subInteger;
         typeInfo->multiply = multiplyInteger;

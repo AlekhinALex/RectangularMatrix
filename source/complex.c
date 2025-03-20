@@ -42,15 +42,6 @@ void printComplex(const void *a)
     printf("] ");
 }
 
-// void assignComplex(void *dest, const void *src)
-// {
-//     Complex *destComplex = (Complex *)dest;
-//     const Complex *srcComplex = (const Complex *)src;
-
-//     destComplex->real = srcComplex->real;
-//     destComplex->imaginary = srcComplex->imaginary;
-// }
-
 void *allocComplex()
 {
     Complex *complex = malloc(sizeof(Complex));
@@ -84,11 +75,6 @@ void *readComplex()
     return value;
 }
 
-// void getSizeComplex()
-// {
-//     return sizeof(Complex);
-// }
-
 void freeComplex(void *value)
 {
     Complex *complex = (Complex *)value;
@@ -101,11 +87,7 @@ void multiplyComplex(const void *a, const void *b, void *result)
     const Complex *complexB = (const Complex *)b;
     Complex *complexResult = (Complex *)result;
 
-    // complex multiplication: (a + bi) * (c + di) = (ac - bd) + (ad + bc)i
-    // real part: ac - bd
     complexResult->real = (complexA->real * complexB->real) - (complexA->imaginary * complexB->imaginary);
-
-    // imaginary part: ad + bc
     complexResult->imaginary = (complexA->real * complexB->imaginary) + (complexA->imaginary * complexB->real);
 }
 
@@ -116,16 +98,9 @@ const struct TypeInfo *getTypeInfoComplex()
     if (typeInfo == NULL)
     {
         typeInfo = malloc(sizeof(struct TypeInfo));
-        if (typeInfo == NULL)
-        {
-            printf("Memory alloction failed.");
-            exit(1);
-        }
         typeInfo->allocate = allocComplex;
-        // typeInfo->assign = assignComplex;
         typeInfo->add = addComplex;
         typeInfo->Free = freeComplex;
-        //! typeInfo->size = getSizeComplex;
         typeInfo->multiply = multiplyComplex;
         typeInfo->print = printComplex;
     }

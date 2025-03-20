@@ -3,17 +3,23 @@
 #include <ctype.h>
 
 #include "../inc/typeInfo.h"
-
 #include "../inc/errorHandling.h"
 #include "../inc/inputHandling.h"
 
 int addMatrix(const Matrix *matrix1, const Matrix *matrix2, Matrix *result)
 {
     // error handling
-    if (isNullMatrix(matrix1) ||
-        isNullMatrix(matrix2) ||
-        areMatricesCompatibleTypes(matrix1, matrix2) ||
-        areMatricesSameSize(matrix1, matrix2))
+    if (isNullMatrix(matrix1) || isNullMatrix(matrix2))
+    {
+        return ERROR_OCCURRED;
+    }
+
+    if (haveMatchingTypes(matrix1, matrix2))
+    {
+        return ERROR_OCCURRED;
+    }
+
+    if (areMatricesSameSize(matrix1, matrix2))
     {
         return ERROR_OCCURRED;
     }
@@ -44,28 +50,32 @@ int addMatrix(const Matrix *matrix1, const Matrix *matrix2, Matrix *result)
 int multiplyMatrix(const Matrix *matrix1, const Matrix *matrix2, Matrix *result)
 {
     // error handling
-    if (isNullMatrix(matrix1) ||
-        isNullMatrix(matrix2) ||
-        areMatricesCompatibleForMultiplication(matrix1, matrix2) ||
-        areMatricesCompatibleTypes(matrix1, matrix2))
+    if (isNullMatrix(matrix1) || isNullMatrix(matrix2))
+    {
+        return ERROR_OCCURRED;
+    }
+
+    if (haveMatchingTypes(matrix1, matrix2))
+    {
+        return ERROR_OCCURRED;
+    }
+
+    if (areMatricesSameSize(matrix1, matrix2))
     {
         return ERROR_OCCURRED;
     }
 
     result->height = matrix1->height;
     result->length = matrix2->length;
-
     result->typeInfo = matrix1->typeInfo;
-
-    if (allocateMatrixElements(result, matrix1) != SUCCESSFUL_EXECUTION)
+    if (!allocateMatrixElements(result, matrix1))
     {
         return ERROR_OCCURRED;
     }
+    printf("Hello\n");
 
-    //! SIZE GETTER
     void *temp = NULL;
     temp = result->typeInfo->allocate();
-    //! --------------
 
     // matrix multiplication
     for (int i = 0; i < matrix1->height; i++)
@@ -123,8 +133,6 @@ int inputMatrix(Matrix *matrix)
     printf("3) Complex numbers\n");
     typeHolder = getChoice(1, 3);
 
-    // TODO ===================================
-    //  Is not working due to lack of files, which are not allowed to be included
     switch (typeHolder)
     {
     case 1:
@@ -139,7 +147,6 @@ int inputMatrix(Matrix *matrix)
     default:
         break;
     }
-    // TODO ===================================
 
     printf("\nMatrix Size\n");
     printf("-----------\n");

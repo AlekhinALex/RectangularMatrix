@@ -18,6 +18,11 @@ int isNullMatrix(const Matrix *matrix)
 
 int areMatricesSameSize(const Matrix *matrix1, const Matrix *matrix2)
 {
+
+    if (isNullMatrix(matrix1) || isNullMatrix(matrix2))
+    {
+        return ERROR_DETECTED;
+    }
     if (matrix1->height != matrix2->height || matrix1->length != matrix2->length)
     {
         printf("Error: Matrices must have identical sizes (%ux%u and %ux%u)\n",
@@ -38,12 +43,18 @@ int areMatricesCompatibleForMultiplication(const Matrix *matrix1, const Matrix *
     return PASSED;
 }
 
-// int areMatricesCompatibleTypes(const Matrix *matrix1, const Matrix *matrix2)
-// {
-//     if (matrix1->typeComponents != matrix2->typeComponents)
-//     {
-//         printf("Error: Matrices must have identical types. Try again.\n");
-//         return ERROR_DETECTED;
-//     }
-//     return PASSED;
-// }
+int haveMatchingTypes(const Matrix *matrix1, const Matrix *matrix2)
+{
+    if (isNullMatrix(matrix1) || isNullMatrix(matrix2))
+    {
+        return ERROR_DETECTED;
+    }
+
+    if (matrix1->typeInfo != matrix2->typeInfo)
+    {
+        printf("Error: Matrices have different types\n");
+        return ERROR_DETECTED;
+    }
+
+    return PASSED;
+}
