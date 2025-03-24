@@ -1,13 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../inc/integer.h"
-#include "../inc/double.h"
-#include "../inc/complex.h"
 #include "../inc/matrix.h"
-
 #include "../inc/inputHandling.h"
+#include "../inc/errorHandling.h"
 
+// TODO: !MB! in input make the second input with definite type
 void printMenu();
 
 int main()
@@ -23,20 +21,17 @@ int main()
         {
         case 1: // Matrix addition
         {
-            Matrix *m1 = malloc(sizeof(Matrix));
-            Matrix *m2 = malloc(sizeof(Matrix));
-            Matrix *result = malloc(sizeof(Matrix));
+            Matrix m1;
+            Matrix m2;
+            Matrix result;
 
             printf("\nMatrix addition(A + B)\n");
             printf("--------------------\n");
             printf("First matrix: \n");
             printf("--------------------\n\n");
 
-            if (inputMatrix(m1) == 0)
+            if (inputNewMatrix(&m1) == ERROR_OCCURRED)
             {
-                freeMatrix(m1);
-                freeMatrix(m2);
-                freeMatrix(result);
                 break;
             }
 
@@ -44,49 +39,42 @@ int main()
             printf("Enter second matrix: \n");
             printf("--------------------\n\n");
 
-            if (inputMatrix(m2) == 0)
+            if (inputNewMatrix(&m2) == ERROR_OCCURRED)
             {
-                freeMatrix(m1);
-                freeMatrix(m2);
-                freeMatrix(result);
+                freeMatrix(&m1);
                 break;
             }
 
-            if (addMatrix(m1, m2, result) == 0)
+            if (addMatrix(&m1, &m2, &result) == ERROR_OCCURRED)
             {
-                printMatrix(m1);
-                printMatrix(m2);
-                printMatrix(result);
+                freeMatrix(&m1);
+                freeMatrix(&m2);
                 printf("Failed to add matrices\n\n");
             }
             else
             {
                 printf("\nResult matrix:\n");
                 printf("--------------------\n");
-                printMatrix(result);
+                printMatrix(&result);
+                freeMatrix(&m1);
+                freeMatrix(&m2);
+                freeMatrix(&result);
             }
-
-            freeMatrix(m1);
-            freeMatrix(m2);
-            freeMatrix(result);
         }
         break;
 
         case 2: // Matrix multiplication
         {
-            Matrix *m1 = malloc(sizeof(Matrix));
-            Matrix *m2 = malloc(sizeof(Matrix));
-            Matrix *result = malloc(sizeof(Matrix));
+            Matrix m1;
+            Matrix m2;
+            Matrix result;
             printf("\nMatrix Multiplication (A × B)\n");
             printf("--------------------\n");
             printf("First matrix: \n");
             printf("--------------------\n\n");
 
-            if (inputMatrix(m1) == 0)
+            if (inputNewMatrix(&m1) == ERROR_OCCURRED)
             {
-                freeMatrix(m1);
-                freeMatrix(m2);
-                freeMatrix(result);
                 break;
             }
 
@@ -94,46 +82,43 @@ int main()
             printf("Enter second matrix: \n");
             printf("--------------------\n\n");
 
-            if (inputMatrix(m2) == 0)
+            if (inputNewMatrix(&m2) == ERROR_OCCURRED)
             {
-                freeMatrix(m1);
-                freeMatrix(m2);
-                freeMatrix(result);
+                freeMatrix(&m1);
                 break;
             }
 
-            if (multiplyMatrix(m1, m2, result) == 0)
+            if (multiplyMatrix(&m1, &m2, &result) == ERROR_OCCURRED)
             {
+                freeMatrix(&m1);
+                freeMatrix(&m2);
                 printf("Failed to multiply matrices\n\n");
             }
             else
             {
                 printf("\nResult matrix:\n");
                 printf("--------------------\n");
-                printMatrix(result);
+                printMatrix(&result);
+                freeMatrix(&m1);
+                freeMatrix(&m2);
+                freeMatrix(&result);
             }
-
-            freeMatrix(m1);
-            freeMatrix(m2);
-            freeMatrix(result);
         }
         break;
-            break;
         case 3: // Matrix transposition
         {
-            Matrix *m = malloc(sizeof(Matrix));
+            Matrix m;
             printf("\nMatrix Transposition\n");
             printf("--------------------\n");
             printf("Enter matrix: \n");
             printf("--------------------\n\n");
 
-            if (inputMatrix(m) == 0)
+            if (inputNewMatrix(&m) == ERROR_OCCURRED)
             {
-                freeMatrix(m);
                 break;
             }
 
-            if (transportMatrix(m) == 0)
+            if (transposeMatrix(&m) == ERROR_OCCURRED)
             {
                 printf("Failed to transpose matrix\n\n");
             }
@@ -141,10 +126,9 @@ int main()
             {
                 printf("\nTransposed matrix:\n");
                 printf("--------------------\n");
-                printMatrix(m);
+                printMatrix(&m);
+                freeMatrix(&m);
             }
-
-            freeMatrix(m);
         }
         break;
         case 4:

@@ -5,15 +5,14 @@ typedef struct Matrix
 {
     unsigned int length;
     unsigned int height;
-    void **data;
+    void *data;
     const struct TypeInfo *typeInfo;
 } Matrix;
 
-int addMatrix(const Matrix *matrix1, const Matrix *matrix2, Matrix *result);
-int multiplyMatrix(const Matrix *matrix1, const Matrix *matrix2, Matrix *result);
-int inputMatrix(Matrix *matrix);
-int allocateMatrixElements(Matrix *matrixDest, const Matrix *matrixSrc);
+enum isSuccess addMatrix(const Matrix *matrix1, const Matrix *matrix2, Matrix *result);
+enum isSuccess multiplyMatrix(const Matrix *matrix1, const Matrix *matrix2, Matrix *result);
+enum isSuccess inputNewMatrix(Matrix *matrix);
+enum isSuccess transposeMatrix(Matrix *matrix);
+void readMatrixComponents(Matrix *matrix);
 void printMatrix(const Matrix *matrix);
 void freeMatrix(Matrix *matrix);
-void setupMatrixElements(Matrix *matrix);
-int transportMatrix(Matrix *matrix);

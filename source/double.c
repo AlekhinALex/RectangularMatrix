@@ -3,7 +3,7 @@
 
 #include "../inc/typeInfo.h"
 #include "../inc/double.h"
-#include "../inc/typeInfoDouble.h"
+#include "../inc/doubleImpl.h"
 
 void addDouble(const void *a, const void *b, void *result)
 {
@@ -37,7 +37,7 @@ void assignDouble(void *destination, const void *source)
     double *newDest = (double *)destination;
     double *newSource = (double *)source;
 
-    newDest = newSource;
+    *newDest = *newSource;
 }
 
 void *allocDouble()
@@ -47,17 +47,24 @@ void *allocDouble()
     return newDouble;
 }
 
-void *readDouble()
+size_t getSizeDouble()
 {
-    double *value = malloc(sizeof(double));
+    return sizeof(double);
+}
 
-    if (scanf("%lf", value) != 1)
+isSuccess readDouble(void *destination)
+{
+    double valueHolder = 0;
+
+    if (scanf("%lf", &valueHolder) != 1)
     {
-        free(value);
-        return NULL;
+        return ERROR_OCCURRED;
     }
 
-    return value;
+    *(double *)destination = valueHolder;
+    destination = (void *)destination;
+
+    return SUCCESSFUL_EXECUTION;
 }
 
 void printDouble(const void *a)
@@ -79,6 +86,8 @@ const struct TypeInfo *getTypeInfoDouble()
     {
         typeInfo = malloc(sizeof(struct TypeInfo));
         typeInfo->allocate = allocDouble;
+        typeInfo->assign = assignDouble;
+        typeInfo->size = getSizeDouble;
         typeInfo->add = addDouble;
         typeInfo->substract = subDouble;
         typeInfo->multiply = multiplyDouble;

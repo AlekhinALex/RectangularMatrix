@@ -1,5 +1,6 @@
 #pragma once
-#include "typeInfo.h"
+
+#include "complex.h"
 
 typedef struct Complex
 {
@@ -11,6 +12,5 @@ void addComplex(const void *a, const void *b, void *result);
 void multiplyComplex(const void *, const void *, void *result);
 void printComplex(const void *complex);
 void *allocComplex();
-void *readComplex();
+isSuccess readComplex(void *destination);
 void freeComplex(void *value);
-void assignComplex(void *dest, const void *src);

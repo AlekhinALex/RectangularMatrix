@@ -1,0 +1,3 @@
+/Users/alexalekhin/Desktop/MEPHI semester 2/lab1_rectangularMatrix/built/CMakeFiles/lab1_rectangularMatri.dir
+/Users/alexalekhin/Desktop/MEPHI semester 2/lab1_rectangularMatrix/built/CMakeFiles/edit_cache.dir
+/Users/alexalekhin/Desktop/MEPHI semester 2/lab1_rectangularMatrix/built/CMakeFiles/rebuild_cache.dir

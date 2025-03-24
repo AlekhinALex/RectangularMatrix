@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 #include "../inc/complex.h"
-#include "../inc/typeInfoComplex.h"
+#include "../inc/complexImpl.h"
 
 void addComplex(const void *a, const void *b, void *result)
 {
@@ -23,21 +23,22 @@ void printComplex(const void *a)
         return;
     }
     const Complex *complex = (const Complex *)a;
-    if (!complex->real || !complex->imaginary)
-    {
-        printf("Invalid complex number pointers\n");
-        return;
-    }
     printf("[");
 
     printf("%g", complex->real);
 
     if (complex->imaginary > 0)
+    {
         printf(" + %gi", complex->imaginary);
+    }
     else if (complex->imaginary < 0)
+    {
         printf(" - %gi", -(complex->imaginary));
+    }
     else
+    {
         printf(" + 0i");
+    }
 
     printf("] ");
 }
@@ -45,11 +46,6 @@ void printComplex(const void *a)
 void *allocComplex()
 {
     Complex *complex = malloc(sizeof(Complex));
-    if (complex == NULL)
-    {
-        printf("Memory allocation failed for complex number\n");
-        return NULL;
-    }
 
     complex->real = 0.0;
     complex->imaginary = 0.0;
@@ -57,22 +53,35 @@ void *allocComplex()
     return complex;
 }
 
-void *readComplex()
+size_t getSizeComplex()
 {
-    Complex *value = malloc(sizeof(Complex));
+    return sizeof(Complex);
+}
+
+isSuccess readComplex(void *destination)
+{
+    Complex *value = (Complex *)destination;
 
     double tempReal, tempImaginary;
 
     if (scanf(" (%lf, %lf)", &tempReal, &tempImaginary) != 2)
     {
-        free(value);
-        return NULL;
+        return ERROR_OCCURRED;
     }
 
     value->real = tempReal;
     value->imaginary = tempImaginary;
 
-    return value;
+    return SUCCESSFUL_EXECUTION;
+}
+
+void assignComplex(void *destination, const void *source)
+{
+    Complex *newDest = (Complex *)destination;
+    const Complex *newSource = (Complex *)source;
+
+    newDest->real = newSource->real;
+    newDest->imaginary = newSource->imaginary;
 }
 
 void freeComplex(void *value)
@@ -99,10 +108,12 @@ const struct TypeInfo *getTypeInfoComplex()
     {
         typeInfo = malloc(sizeof(struct TypeInfo));
         typeInfo->allocate = allocComplex;
+        typeInfo->size = getSizeComplex;
         typeInfo->add = addComplex;
         typeInfo->Free = freeComplex;
         typeInfo->multiply = multiplyComplex;
         typeInfo->print = printComplex;
+        typeInfo->input = readComplex;
     }
 
     return typeInfo;

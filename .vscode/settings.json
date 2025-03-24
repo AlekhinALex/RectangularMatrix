@@ -1,0 +1,14 @@
+{
+  "files.associations": {
+    "typeinfointeger.h": "c",
+    "typeinfo.h": "c",
+    "matrix.h": "c",
+    "complex.h": "c",
+    "double.h": "c",
+    "integer.h": "c",
+    "errorhandling.h": "c",
+    "inputhandling.h": "c",
+    "compleximpl.h": "c"
+  },
+  "C_Cpp.errorSquiggles": "disabled"
+}

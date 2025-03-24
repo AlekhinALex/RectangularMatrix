@@ -1,7 +1,13 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+
 #include "../inc/inputHandling.h"
+
+#include "../inc/integer.h"
+#include "../inc/double.h"
+#include "../inc/complex.h"
+#include "../inc/matrix.h"
 
 int getChoice(int a, int b)
 {
@@ -90,4 +96,47 @@ void clearInputBuffer()
     {
         ;
     }
+}
+
+//* Constructors for matricies
+
+// for input
+Matrix createNewMatrix(int height, int length, int typeHolder)
+{
+    const TypeInfo *type;
+    switch (typeHolder)
+    {
+    case 1:
+        type = getTypeInfoDouble();
+        break;
+    case 2:
+        type = getTypeInfoInteger();
+        break;
+    case 3:
+        type = getTypeInfoComplex();
+        break;
+    default:
+        type = NULL;
+        break;
+    }
+
+    Matrix matrix;
+    matrix.height = height;
+    matrix.length = length;
+    matrix.typeInfo = type;
+    matrix.data = malloc(matrix.height * matrix.length * matrix.typeInfo->size());
+
+    return matrix;
+}
+
+// for addition and etc.
+Matrix setupMatrix(int height, int length, const TypeInfo *type)
+{
+    Matrix matrix;
+    matrix.height = height;
+    matrix.length = length;
+    matrix.typeInfo = type;
+    matrix.data = malloc(matrix.height * matrix.length * matrix.typeInfo->size());
+
+    return matrix;
 }

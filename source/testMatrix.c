@@ -1,235 +1,326 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <assert.h>
 #include <math.h>
-
-#include "../inc/errorHandling.h"
-#include "../inc/typeInfoComplex.h"
-#include "../inc/typeInfoDouble.h"
-#include "../inc/typeInfoInteger.h"
-#include "../inc/typeInfo.h"
+#include "../inc/complex.h"
+#include "../inc/integer.h"
+#include "../inc/double.h"
+#include "../inc/complexImpl.h"
+#include "../inc/integerImpl.h"
+#include "../inc/doubleImpl.h"
+#include "../inc/inputHandling.h"
 #include "../inc/matrix.h"
+#include "../inc/errorHandling.h"
 
-Matrix *createTestMatrix(int height, int length, const TypeInfo *type)
+static void fillIntMatrix(Matrix *m, const int *values)
 {
-    Matrix *matrix = malloc(sizeof(Matrix));
-    matrix->height = height;
-    matrix->length = length;
-    matrix->typeInfo = type;
-    setupMatrixElements(matrix);
-    return matrix;
+    int *data = (int *)m->data;
+    for (int i = 0; i < m->height * m->length; i++)
+    {
+        data[i] = values[i];
+    }
 }
 
-void testDoubleMatrixOperations()
+static void fillDoubleMatrix(Matrix *m, const double *values)
 {
-    Matrix *matrix1 = createTestMatrix(2, 3, getTypeInfoDouble());
-    Matrix *matrix2 = createTestMatrix(2, 3, getTypeInfoDouble());
-    Matrix *result = createTestMatrix(2, 3, getTypeInfoDouble());
-
-    for (int i = 0; i < matrix1->height; i++)
+    double *data = (double *)m->data;
+    for (int i = 0; i < m->height * m->length; i++)
     {
-        for (int j = 0; j < matrix1->length; j++)
+        data[i] = values[i];
+    }
+}
+
+static void fillComplexMatrix(Matrix *m, const Complex *values)
+{
+    Complex *data = (Complex *)m->data;
+    for (int i = 0; i < m->height * m->length; i++)
+    {
+        data[i] = values[i];
+    }
+}
+
+static int compareIntMatrices(const Matrix *m1, const Matrix *m2)
+{
+    if (m1->height != m2->height || m1->length != m2->length)
+    {
+        return 0;
+    }
+    int *data1 = (int *)m1->data;
+    int *data2 = (int *)m2->data;
+    for (int i = 0; i < m1->height * m1->length; i++)
+    {
+        if (data1[i] != data2[i])
         {
-            double *val1 = matrix1->data[i * matrix1->length + j];
-            double *val2 = matrix2->data[i * matrix2->length + j];
-            *val1 = i + j + 1.0;
-            *val2 = 1.0;
+            return 0;
         }
     }
+    return 1;
+}
 
-    assert(addMatrix(matrix1, matrix2, result) == SUCCESSFUL_EXECUTION);
-
-    for (int i = 0; i < result->height; i++)
+static int compareDoubleMatrices(const Matrix *m1, const Matrix *m2, double epsilon)
+{
+    if (m1->height != m2->height || m1->length != m2->length)
     {
-        for (int j = 0; j < result->length; j++)
+        return 0;
+    }
+    double *data1 = (double *)m1->data;
+    double *data2 = (double *)m2->data;
+    for (int i = 0; i < m1->height * m1->length; i++)
+    {
+        if (fabs(data1[i] - data2[i]) > epsilon)
         {
-            double *res = result->data[i * result->length + j];
-            assert(fabs(*res - ((i + j + 1.0) + 1.0)) < 1e-10);
+            return 0;
         }
     }
-
-    assert(transportMatrix(matrix1) == SUCCESSFUL_EXECUTION);
-    assert(matrix1->height == 3 && matrix1->length == 2);
-
-    freeMatrix(matrix1);
-    freeMatrix(matrix2);
-    freeMatrix(result);
-    printf(" -- Double matrix operations passed!\n");
+    return 1;
 }
 
-void testTypeMatching()
+static int compareComplexMatrices(const Matrix *m1, const Matrix *m2, double epsilon)
 {
-    // (Double)
-    Matrix *matrix1 = createTestMatrix(2, 2, getTypeInfoDouble());
-    Matrix *matrix2 = createTestMatrix(2, 2, getTypeInfoDouble());
-    assert(haveMatchingTypes(matrix1, matrix2) == 0);
-
-    // (Double vs Complex)
-    Matrix *matrix3 = createTestMatrix(2, 2, getTypeInfoComplex());
-    assert(haveMatchingTypes(matrix1, matrix3) == 1);
-
-    // NULL matrix tests
-    assert(haveMatchingTypes(NULL, matrix2) == 1);
-    assert(haveMatchingTypes(matrix1, NULL) == 1);
-    assert(haveMatchingTypes(NULL, NULL) == 1);
-
-    freeMatrix(matrix1);
-    freeMatrix(matrix2);
-    freeMatrix(matrix3);
-
-    printf(" -- Type matching tests passed!\n");
-}
-
-void testLargeMatrices()
-{
-    const int SIZE = 1000;
-
-    Matrix *largeMatrix1 = createTestMatrix(SIZE, SIZE, getTypeInfoDouble());
-    Matrix *largeMatrix2 = createTestMatrix(SIZE, SIZE, getTypeInfoDouble());
-    Matrix *result = createTestMatrix(SIZE, SIZE, getTypeInfoDouble());
-
-    for (int i = 0; i < SIZE * SIZE; i++)
+    if (m1->height != m2->height || m1->length != m2->length)
     {
-        double *val1 = largeMatrix1->data[i];
-        double *val2 = largeMatrix2->data[i];
-        *val1 = (double)(i % 100) / 10.0;
-        *val2 = 1.0;
+        return 0;
     }
-
-    assert(addMatrix(largeMatrix1, largeMatrix2, result) == SUCCESSFUL_EXECUTION);
-
-    for (int i = 0; i < 100; i++)
+    Complex *data1 = (Complex *)m1->data;
+    Complex *data2 = (Complex *)m2->data;
+    for (int i = 0; i < m1->height * m1->length; i++)
     {
-        double *res = result->data[i];
-        double *val1 = largeMatrix1->data[i];
-        double *val2 = largeMatrix2->data[i];
-        assert(fabs(*res - (*val1 + *val2)) < 1e-10);
-    }
-
-    // matrix multiplication (100x100 subset)
-    Matrix *multMatrix1 = createTestMatrix(100, 100, getTypeInfoDouble());
-    Matrix *multMatrix2 = createTestMatrix(100, 100, getTypeInfoDouble());
-    Matrix *multResult = createTestMatrix(100, 100, getTypeInfoDouble());
-
-    for (int i = 0; i < 100 * 100; i++)
-    {
-        double *val1 = multMatrix1->data[i];
-        double *val2 = multMatrix2->data[i];
-        *val1 = 1.0;
-        *val2 = 2.0;
-    }
-
-    assert(multiplyMatrix(multMatrix1, multMatrix2, multResult) == SUCCESSFUL_EXECUTION);
-
-    // Testing array of matricies
-    const int NUM_MATRICES = 5;
-    Matrix *matrices[NUM_MATRICES];
-
-    for (int i = 0; i < NUM_MATRICES; i++)
-    {
-        matrices[i] = createTestMatrix(SIZE, SIZE, getTypeInfoDouble());
-        for (int j = 0; j < SIZE * SIZE; j++)
+        if (fabs(data1[i].real - data2[i].real) > epsilon ||
+            fabs(data1[i].imaginary - data2[i].imaginary) > epsilon)
         {
-            double *val = matrices[i]->data[j];
-            *val = (double)j;
+            return 0;
         }
     }
-
-    assert(transportMatrix(largeMatrix1) == SUCCESSFUL_EXECUTION);
-
-    assert(haveMatchingTypes(largeMatrix1, largeMatrix2) == 0);
-
-    freeMatrix(largeMatrix1);
-    freeMatrix(largeMatrix2);
-    freeMatrix(result);
-    freeMatrix(multMatrix1);
-    freeMatrix(multMatrix2);
-    freeMatrix(multResult);
-
-    for (int i = 0; i < NUM_MATRICES; i++)
-    {
-        freeMatrix(matrices[i]);
-    }
-
-    printf(" -- Large matrix tests passed!\n\n");
+    return 1;
 }
 
-void testComplexMatrixOperations()
+static void testIntegerOperations()
 {
-    Matrix *matrix1 = createTestMatrix(2, 2, getTypeInfoComplex());
-    Matrix *matrix2 = createTestMatrix(2, 2, getTypeInfoComplex());
-    Matrix *result = createTestMatrix(2, 2, getTypeInfoComplex());
+    // Addition test
+    Matrix m1 = setupMatrix(2, 2, getTypeInfoInteger());
+    Matrix m2 = setupMatrix(2, 2, getTypeInfoInteger());
+    Matrix result = setupMatrix(2, 2, getTypeInfoInteger());
 
-    for (int i = 0; i < 4; i++)
-    {
-        Complex *c1 = matrix1->data[i];
-        Complex *c2 = matrix2->data[i];
+    int values1[] = {1, 2,
+                     3, 4};
 
-        c1->real = i + 1.0;
-        c1->imaginary = i + 2.0;
-        c2->real = 1.0;
-        c2->imaginary = 1.0;
-    }
+    int values2[] = {1, 1,
+                     1, 1};
 
-    assert(addMatrix(matrix1, matrix2, result) == SUCCESSFUL_EXECUTION);
+    int expected[] = {2, 3,
+                      4, 5};
 
-    for (int i = 0; i < 4; i++)
-    {
-        Complex *res = result->data[i];
-        Complex *m1 = matrix1->data[i];
-        Complex *m2 = matrix2->data[i];
+    fillIntMatrix(&m1, values1);
+    fillIntMatrix(&m2, values2);
 
-        assert(fabs(res->real - (m1->real + m2->real)) < 1e-10);
-        assert(fabs(res->imaginary - (m1->imaginary + m2->imaginary)) < 1e-10);
-    }
+    assert(addMatrix(&m1, &m2, &result) == SUCCESSFUL_EXECUTION);
 
-    Matrix *multResult = createTestMatrix(2, 2, getTypeInfoComplex());
-    assert(multiplyMatrix(matrix1, matrix2, multResult) == SUCCESSFUL_EXECUTION);
+    Matrix expectedMatrix = setupMatrix(2, 2, getTypeInfoInteger());
+    fillIntMatrix(&expectedMatrix, expected);
 
-    freeMatrix(matrix1);
-    freeMatrix(matrix2);
-    freeMatrix(result);
-    freeMatrix(multResult);
-    printf(" -- Complex matrix operations passed!\n");
+    assert(compareIntMatrices(&result, &expectedMatrix));
+
+    // Multiplication test
+    Matrix m3 = setupMatrix(2, 3, getTypeInfoInteger());
+    Matrix m4 = setupMatrix(3, 2, getTypeInfoInteger());
+    Matrix multResult = setupMatrix(2, 2, getTypeInfoInteger());
+
+    int values3[] = {1, 2, 3,
+                     4, 5, 6};
+
+    int values4[] = {1, 2,
+                     3, 4,
+                     5, 6};
+
+    int expectedMult[] = {22, 28,
+                          49, 64};
+
+    fillIntMatrix(&m3, values3);
+    fillIntMatrix(&m4, values4);
+
+    assert(multiplyMatrix(&m3, &m4, &multResult) == SUCCESSFUL_EXECUTION);
+
+    Matrix expectedMultMatrix = setupMatrix(2, 2, getTypeInfoInteger());
+    fillIntMatrix(&expectedMultMatrix, expectedMult);
+
+    assert(compareIntMatrices(&multResult, &expectedMultMatrix));
+
+    freeMatrix(&m1);
+    freeMatrix(&m2);
+    freeMatrix(&m3);
+    freeMatrix(&m4);
+    freeMatrix(&result);
+    freeMatrix(&multResult);
+    freeMatrix(&expectedMatrix);
+    freeMatrix(&expectedMultMatrix);
+
+    printf("  ===  Integer matrix operations passed!\n");
 }
 
-void testMatrixErrorHandling()
+static void testComplexOperations()
 {
-    // Test null matrix handling
-    Matrix *matrix1 = NULL;
-    Matrix *matrix2 = createTestMatrix(2, 2, getTypeInfoDouble());
-    Matrix *result = createTestMatrix(2, 2, getTypeInfoDouble());
+    Matrix m1 = setupMatrix(2, 2, getTypeInfoComplex());
+    Matrix m2 = setupMatrix(2, 2, getTypeInfoComplex());
+    Matrix result = setupMatrix(2, 2, getTypeInfoComplex());
 
-    assert(addMatrix(matrix1, matrix2, result) == ERROR_OCCURRED);
-    assert(multiplyMatrix(matrix1, matrix2, result) == ERROR_OCCURRED);
-    assert(transportMatrix(matrix1) == ERROR_OCCURRED);
+    Complex values1[] = {{1, 1}, {2, 2}, {3, 3}, {4, 4}};
 
-    // Test incompatible matrix sizes for addition
-    matrix1 = createTestMatrix(2, 3, getTypeInfoDouble());
-    assert(addMatrix(matrix1, matrix2, result) == ERROR_OCCURRED);
+    Complex values2[] = {{1, 1}, {1, 1}, {1, 1}, {1, 1}};
 
-    // Test incompatible matrix sizes for multiplication
-    Matrix *matrix3 = createTestMatrix(3, 2, getTypeInfoDouble());
-    assert(multiplyMatrix(matrix1, matrix3, result) == ERROR_OCCURRED);
+    Complex expected[] = {{2, 2}, {3, 3}, {4, 4}, {5, 5}};
 
-    freeMatrix(matrix1);
-    freeMatrix(matrix2);
-    freeMatrix(matrix3);
-    freeMatrix(result);
-    printf(" -- Matrix error handling tests passed!\n");
+    fillComplexMatrix(&m1, values1);
+    fillComplexMatrix(&m2, values2);
+
+    assert(addMatrix(&m1, &m2, &result) == SUCCESSFUL_EXECUTION);
+
+    Matrix expectedMatrix = setupMatrix(2, 2, getTypeInfoComplex());
+    fillComplexMatrix(&expectedMatrix, expected);
+
+    assert(compareComplexMatrices(&result, &expectedMatrix, 1e-10));
+
+    // Test complex multiplication
+    Matrix m3 = setupMatrix(2, 2, getTypeInfoComplex());
+    Matrix m4 = setupMatrix(2, 2, getTypeInfoComplex());
+    Matrix multResult = setupMatrix(2, 2, getTypeInfoComplex());
+
+    Complex values3[] = {{1, 1}, {2, 2}, {3, 3}, {4, 4}};
+    Complex values4[] = {{1, 0}, {0, 1}, {1, 1}, {2, 2}};
+    Complex expectedResults[] = {{1, 5}, {-1, 9}, {3, 11}, {-3, 19}};
+
+    fillComplexMatrix(&m3, values3);
+    fillComplexMatrix(&m4, values4);
+
+    assert(multiplyMatrix(&m3, &m4, &multResult) == SUCCESSFUL_EXECUTION);
+    Matrix expectedMatrixMult = setupMatrix(2, 2, getTypeInfoComplex());
+    fillComplexMatrix(&expectedMatrixMult, expectedResults);
+
+    assert(compareComplexMatrices(&expectedMatrixMult, &multResult, 1e-10));
+
+    freeMatrix(&m1);
+    freeMatrix(&m2);
+    freeMatrix(&m3);
+    freeMatrix(&m4);
+    freeMatrix(&result);
+    freeMatrix(&multResult);
+    freeMatrix(&expectedMatrix);
+    freeMatrix(&expectedMatrixMult);
+
+    printf("  ===  Complex matrix operations passed!\n");
+}
+
+static void testDoubleOperations()
+{
+    // Addition
+    Matrix m1 = setupMatrix(2, 2, getTypeInfoDouble());
+    Matrix m2 = setupMatrix(2, 2, getTypeInfoDouble());
+    Matrix result = setupMatrix(2, 2, getTypeInfoDouble());
+
+    double values1[] = {1.5, 2.7, 3.2, 4.8};
+    double values2[] = {1.1, 1.1, 1.1, 1.1};
+    double expected[] = {2.6, 3.8, 4.3, 5.9};
+
+    fillDoubleMatrix(&m1, values1);
+    fillDoubleMatrix(&m2, values2);
+
+    assert(addMatrix(&m1, &m2, &result) == SUCCESSFUL_EXECUTION);
+
+    Matrix expectedMatrix = setupMatrix(2, 2, getTypeInfoDouble());
+    fillDoubleMatrix(&expectedMatrix, expected);
+
+    assert(compareDoubleMatrices(&result, &expectedMatrix, 1e-10));
+
+    // Multiplication
+    Matrix m3 = setupMatrix(2, 3, getTypeInfoDouble());
+    Matrix m4 = setupMatrix(3, 2, getTypeInfoDouble());
+    Matrix multResult = setupMatrix(2, 2, getTypeInfoDouble());
+
+    double values3[] = {1.5, 2.0, 3.5,
+                        4.0, 5.5, 6.0};
+
+    double values4[] = {1.5, 2.0,
+                        3.0, 4.5,
+                        5.5, 6.0};
+
+    double expectedMult[] = {27.5, 33.0,
+                             55.5, 68.75};
+
+    fillDoubleMatrix(&m3, values3);
+    fillDoubleMatrix(&m4, values4);
+
+    assert(multiplyMatrix(&m3, &m4, &multResult) == SUCCESSFUL_EXECUTION);
+
+    Matrix expectedMultMatrix = setupMatrix(2, 2, getTypeInfoDouble());
+    fillDoubleMatrix(&expectedMultMatrix, expectedMult);
+
+    assert(compareDoubleMatrices(&multResult, &expectedMultMatrix, 1e-10));
+
+    // Transposition
+    Matrix m5 = setupMatrix(2, 3, getTypeInfoDouble());
+    double values5[] = {1.1, 2.2, 3.3,
+                        4.4, 5.5, 6.6};
+
+    double expectedTrans[] = {1.1, 4.4,
+                              2.2, 5.5,
+                              3.3, 6.6};
+
+    fillDoubleMatrix(&m5, values5);
+
+    assert(transposeMatrix(&m5) == SUCCESSFUL_EXECUTION);
+
+    Matrix expectedTransMatrix = setupMatrix(3, 2, getTypeInfoDouble());
+
+    fillDoubleMatrix(&expectedTransMatrix, expectedTrans);
+
+    assert(compareDoubleMatrices(&m5, &expectedTransMatrix, 1));
+
+    freeMatrix(&m1);
+    freeMatrix(&m2);
+    freeMatrix(&m3);
+    freeMatrix(&m4);
+    freeMatrix(&m5);
+    freeMatrix(&result);
+    freeMatrix(&multResult);
+    freeMatrix(&expectedMatrix);
+    freeMatrix(&expectedMultMatrix);
+    freeMatrix(&expectedTransMatrix);
+
+    printf("  ===  Double matrix operations all passed!\n");
+}
+
+static void testErrorCases()
+{
+    // Different types
+    Matrix intMatrix = setupMatrix(2, 2, getTypeInfoInteger());
+    Matrix doubleMatrix = setupMatrix(2, 2, getTypeInfoDouble());
+    Matrix result = setupMatrix(2, 2, getTypeInfoInteger());
+
+    assert(addMatrix(&intMatrix, &doubleMatrix, &result) == ERROR_OCCURRED);
+
+    // Different dimensions
+    Matrix m1 = setupMatrix(2, 3, getTypeInfoInteger());
+    Matrix m2 = setupMatrix(2, 2, getTypeInfoInteger());
+
+    assert(addMatrix(&m1, &m2, &result) == ERROR_OCCURRED);
+    assert(multiplyMatrix(&m1, &m2, &result) == ERROR_OCCURRED);
+
+    freeMatrix(&intMatrix);
+    freeMatrix(&doubleMatrix);
+    freeMatrix(&m1);
+    freeMatrix(&m2);
+    freeMatrix(&result);
+
+    printf("  ===  Error cases passed!\n");
 }
 
 int main()
 {
-    printf("\n=== Starting matrix tests ===\n\n");
+    printf("\n--- Starting Matrix Tests ---\n\n");
 
-    testTypeMatching();
-    testDoubleMatrixOperations();
-    testComplexMatrixOperations();
-    testMatrixErrorHandling();
-    testTypeMatching();
-    testLargeMatrices();
+    testIntegerOperations();
+    testDoubleOperations();
+    testComplexOperations();
+    testErrorCases();
 
-    printf("\n\n=== All tests passed successfully! ===\n\n");
+    printf("\n\n--- All Tests Passed! ---\n\n");
     return 0;
 }

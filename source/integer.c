@@ -3,7 +3,7 @@
 
 #include "../inc/typeInfo.h"
 #include "../inc/integer.h"
-#include "../inc/typeInfoInteger.h"
+#include "../inc/integerImpl.h"
 
 void addInteger(const void *a, const void *b, void *result)
 {
@@ -34,17 +34,32 @@ void multiplyInteger(const void *a, const void *b, void *result)
     (*intResult) = (*intA) * (*intB);
 }
 
-void *readInteger()
+isSuccess readInteger(void *destination)
 {
-    int *value = malloc(sizeof(int));
+    int valueHolder = 0;
 
-    if (scanf("%d", value) != 1)
+    if (scanf("%d", &valueHolder) != 1)
     {
-        free(value);
-        return NULL;
+        return ERROR_OCCURRED;
     }
 
-    return value;
+    *(int *)destination = valueHolder;
+    destination = (void *)destination;
+
+    return SUCCESSFUL_EXECUTION;
+}
+
+void assignInteger(void *destination, const void *source)
+{
+    int *newDest = (int *)destination;
+    int *newSource = (int *)source;
+
+    *newDest = *newSource;
+}
+
+size_t getSizeInteger()
+{
+    return sizeof(int);
 }
 
 void *allocInteger()
@@ -67,12 +82,14 @@ void freeInteger(void *ptr)
 
 static struct TypeInfo *typeInfo = NULL;
 
-const struct TypeInfo *getTypeInfoInt()
+const struct TypeInfo *getTypeInfoInteger()
 {
     if (typeInfo == NULL)
     {
         typeInfo = malloc(sizeof(struct TypeInfo));
+        typeInfo->size = getSizeInteger;
         typeInfo->allocate = allocInteger;
+        typeInfo->assign = assignInteger;
         typeInfo->add = addInteger;
         typeInfo->substract = subInteger;
         typeInfo->multiply = multiplyInteger;

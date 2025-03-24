@@ -1,23 +1,24 @@
 #pragma once
-
-#include "integer.h"
-#include "double.h"
-#include "complex.h"
-#include "matrix.h"
+#include "errorHandling.h"
+#include <stdlib.h>
 
 typedef void (*BinaryOperator)(const void *a, const void *b, void *result);
+typedef size_t (*GetSize)();
 typedef void *(*Allocation)();
-typedef void (*Print)(const void *elemenet);
+typedef void (*Assignment)(void *destination, const void *source);
+typedef void (*Print)(const void *element);
 typedef void (*Free)(void *element);
-typedef void *(*Input)();
+typedef enum isSuccess (*Input)(void *destination);
 
 typedef struct TypeInfo
 {
     BinaryOperator add;
     BinaryOperator substract;
     BinaryOperator multiply;
+    Assignment assign;
     Input input;
-    Allocation allocate;
+    GetSize size;
+    Allocation allocate; //? Should I keep it?
     Print print;
     Free Free;
 } TypeInfo;

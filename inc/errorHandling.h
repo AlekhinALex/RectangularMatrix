@@ -1,10 +1,21 @@
 #pragma once
-#include "matrix.h"
 
-#define ERROR_OCCURRED 0
-#define SUCCESSFUL_EXECUTION 1
+/// @brief this file doesn't see matrix.h, here's fix
+typedef struct Matrix Matrix;
 
-int isNullMatrix(const Matrix *matrix);
-int areMatricesSameSize(const Matrix *matrix1, const Matrix *matrix2);
-int areMatricesCompatibleForMultiplication(const Matrix *matrix1, const Matrix *matrix2);
-int haveMatchingTypes(const Matrix *matrix1, const Matrix *matrix2);
+typedef enum isSuccess
+{
+    ERROR_OCCURRED,
+    SUCCESSFUL_EXECUTION
+} isSuccess;
+
+typedef enum errorTests
+{
+    PASSED,
+    ERROR_DETECTED
+} errorTests;
+
+errorTests isNullMatrix(const Matrix *matrix);
+errorTests areMatricesSameSize(const Matrix *matrix1, const Matrix *matrix2);
+errorTests areMatricesCompatibleForMultiplication(const Matrix *matrix1, const Matrix *matrix2);
+errorTests haveMatchingTypes(const Matrix *matrix1, const Matrix *matrix2);
