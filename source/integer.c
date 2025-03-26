@@ -62,13 +62,6 @@ size_t getSizeInteger()
     return sizeof(int);
 }
 
-void *allocInteger()
-{
-    int *newInt = malloc(sizeof(int));
-    *newInt = 0;
-    return newInt;
-}
-
 void printInteger(const void *a)
 {
     const int *integer = (const int *)a;
@@ -88,7 +81,6 @@ const struct TypeInfo *getTypeInfoInteger()
     {
         typeInfo = malloc(sizeof(struct TypeInfo));
         typeInfo->size = getSizeInteger;
-        typeInfo->allocate = allocInteger;
         typeInfo->assign = assignInteger;
         typeInfo->add = addInteger;
         typeInfo->substract = subInteger;

@@ -40,13 +40,6 @@ void assignDouble(void *destination, const void *source)
     *newDest = *newSource;
 }
 
-void *allocDouble()
-{
-    double *newDouble = malloc(sizeof(double));
-    *newDouble = 0.0;
-    return newDouble;
-}
-
 size_t getSizeDouble()
 {
     return sizeof(double);
@@ -85,7 +78,6 @@ const struct TypeInfo *getTypeInfoDouble()
     if (typeInfo == NULL)
     {
         typeInfo = malloc(sizeof(struct TypeInfo));
-        typeInfo->allocate = allocDouble;
         typeInfo->assign = assignDouble;
         typeInfo->size = getSizeDouble;
         typeInfo->add = addDouble;

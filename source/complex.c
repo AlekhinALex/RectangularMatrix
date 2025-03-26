@@ -6,7 +6,6 @@
 
 void addComplex(const void *a, const void *b, void *result)
 {
-
     const Complex *complexA = (const Complex *)a;
     const Complex *complexB = (const Complex *)b;
     Complex *complexResult = (Complex *)result;
@@ -17,11 +16,6 @@ void addComplex(const void *a, const void *b, void *result)
 
 void printComplex(const void *a)
 {
-    if (!a)
-    {
-        printf("NULL ptr detected\n");
-        return;
-    }
     const Complex *complex = (const Complex *)a;
     printf("[");
 
@@ -41,16 +35,6 @@ void printComplex(const void *a)
     }
 
     printf("] ");
-}
-
-void *allocComplex()
-{
-    Complex *complex = malloc(sizeof(Complex));
-
-    complex->real = 0.0;
-    complex->imaginary = 0.0;
-
-    return complex;
 }
 
 size_t getSizeComplex()
@@ -107,7 +91,6 @@ const struct TypeInfo *getTypeInfoComplex()
     if (typeInfo == NULL)
     {
         typeInfo = malloc(sizeof(struct TypeInfo));
-        typeInfo->allocate = allocComplex;
         typeInfo->size = getSizeComplex;
         typeInfo->add = addComplex;
         typeInfo->Free = freeComplex;

@@ -19,15 +19,15 @@ isSuccess addMatrix(const Matrix *matrix1, const Matrix *matrix2, Matrix *result
     *result = setupMatrix(matrix1->height, matrix1->length, matrix1->typeInfo);
 
     size_t elementSize = matrix1->typeInfo->size();
-    size_t totalElements = matrix1->height * matrix1->length;
+    unsigned int totalElements = matrix1->height * matrix1->length;
 
-    char *ptr1 = matrix1->data;
-    char *ptr2 = matrix2->data;
-    char *ptrResult = result->data;
+    char *ptr1 = (char *)matrix1->data;
+    char *ptr2 = (char *)matrix2->data;
+    char *ptrResult = (char *)result->data;
 
-    for (size_t i = 0; i < totalElements; i++)
+    for (unsigned int i = 0; i < totalElements; i++)
     {
-        result->typeInfo->add(ptr1, ptr2, ptrResult);
+        result->typeInfo->add((const void *)ptr1, (const void *)ptr2, (void *)ptrResult);
         ptr1 += elementSize;
         ptr2 += elementSize;
         ptrResult += elementSize;
@@ -60,20 +60,20 @@ isSuccess multiplyMatrix(const Matrix *matrix1, const Matrix *matrix2, Matrix *r
 
     size_t elementSize = result->typeInfo->size();
 
-    char *ptr1 = matrix1->data;
-    char *ptr2 = matrix2->data;
-    char *ptrResult = result->data;
+    char *ptr1 = (char *)matrix1->data;
+    char *ptr2 = (char *)matrix2->data;
+    char *ptrResult = (char *)result->data;
 
     // Matrix multiplication
-    for (size_t i = 0; i < matrix1->height; i++)
+    for (unsigned int i = 0; i < matrix1->height; i++)
     {
-        for (size_t j = 0; j < matrix2->length; j++)
+        for (unsigned int j = 0; j < matrix2->length; j++)
         {
-            for (size_t k = 0; k < matrix1->length; k++)
+            for (unsigned int k = 0; k < matrix1->length; k++)
             {
-                const void *elemA = ptr1 + (i * matrix1->length + k) * elementSize;
-                const void *elemB = ptr2 + (k * matrix2->length + j) * elementSize;
-                void *elemResult = ptrResult + (i * result->length + j) * elementSize;
+                const void *elemA = (const void *)(ptr1 + (i * matrix1->length + k) * elementSize);
+                const void *elemB = (const void *)(ptr2 + (k * matrix2->length + j) * elementSize);
+                void *elemResult = (void *)(ptrResult + (i * result->length + j) * elementSize);
 
                 result->typeInfo->multiply(elemA, elemB, temp);
                 result->typeInfo->add(elemResult, temp, elemResult);
@@ -139,14 +139,14 @@ isSuccess inputNewMatrix(Matrix *matrix)
 void readMatrixComponents(Matrix *matrix)
 {
     size_t elementSize = matrix->typeInfo->size();
-    size_t totalElements = matrix->height * matrix->length;
-    void *currentElement = matrix->data;
+    unsigned int totalElements = matrix->height * matrix->length;
+    char *currentElement = (char *)matrix->data;
 
-    for (size_t i = 0; i < totalElements; i++)
+    for (unsigned int i = 0; i < totalElements; i++)
     {
         while (1)
         {
-            if (matrix->typeInfo->input(currentElement) == SUCCESSFUL_EXECUTION)
+            if (matrix->typeInfo->input((void *)currentElement) == SUCCESSFUL_EXECUTION)
             {
                 break;
             }
@@ -154,7 +154,6 @@ void readMatrixComponents(Matrix *matrix)
             invalidInput();
             clearInputBuffer();
         }
-
         currentElement += elementSize;
     }
 }
@@ -168,16 +167,16 @@ isSuccess transposeMatrix(Matrix *matrix)
 
     unsigned int oldHeight = matrix->height;
     unsigned int oldLength = matrix->length;
-    size_t totalElements = matrix->height * matrix->length;
+    unsigned int totalElements = matrix->height * matrix->length;
     size_t elementSize = matrix->typeInfo->size();
 
     void *tempData = malloc(totalElements * elementSize);
 
-    void *src = matrix->data;
-    void *dst = tempData;
-    for (size_t i = 0; i < totalElements; i++)
+    char *src = matrix->data;
+    char *dst = tempData;
+    for (unsigned int i = 0; i < totalElements; i++)
     {
-        matrix->typeInfo->assign(dst, src);
+        matrix->typeInfo->assign((void *)dst, (const void *)src);
         src += elementSize;
         dst += elementSize;
     }
@@ -186,13 +185,13 @@ isSuccess transposeMatrix(Matrix *matrix)
     matrix->length = oldHeight;
 
     // Transposition
-    for (size_t i = 0; i < oldHeight; i++)
+    for (unsigned int i = 0; i < oldHeight; i++)
     {
-        for (size_t j = 0; j < oldLength; j++)
+        for (unsigned int j = 0; j < oldLength; j++)
         {
             // B[i][j] = A[j][i];
-            void *srcElement = tempData + (i * oldLength + j) * elementSize;
-            void *dstElement = matrix->data + (j * oldHeight + i) * elementSize;
+            void *srcElement = (void *)((char *)tempData + (i * oldLength + j) * elementSize);
+            void *dstElement = (void *)((char *)matrix->data + (j * oldHeight + i) * elementSize);
             matrix->typeInfo->assign(dstElement, srcElement);
         }
     }
@@ -212,11 +211,11 @@ void printMatrix(const Matrix *matrix)
     char *currentElement = matrix->data;
     size_t elementSize = matrix->typeInfo->size();
 
-    for (size_t i = 0; i < matrix->height; i++)
+    for (unsigned int i = 0; i < matrix->height; i++)
     {
-        for (size_t j = 0; j < matrix->length; j++)
+        for (unsigned int j = 0; j < matrix->length; j++)
         {
-            matrix->typeInfo->print(currentElement);
+            matrix->typeInfo->print((void *)currentElement);
             currentElement += elementSize;
         }
         printf("\n");
