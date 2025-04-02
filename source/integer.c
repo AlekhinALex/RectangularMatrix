@@ -36,16 +36,28 @@ void multiplyInteger(const void *a, const void *b, void *result)
 
 isSuccess readInteger(void *destination)
 {
-    int valueHolder = 0;
+    char *input = NULL;
+    size_t inputSize = 0;
+    int valueHolder;
 
-    if (scanf("%d", &valueHolder) != 1)
+    if (getline(&input, &inputSize, stdin) == -1)
     {
+        printf("Error: Invalid input");
+        free(input);
+        return ERROR_OCCURRED;
+    }
+
+    char *endPtr;
+    valueHolder = (int)strtol(input, &endPtr, 10);
+    if (*endPtr != '\n' && *endPtr != '\0')
+    {
+        printf("Error: Please enter an integer number.\n");
         return ERROR_OCCURRED;
     }
 
     *(int *)destination = valueHolder;
-    destination = (void *)destination;
 
+    free(input);
     return SUCCESSFUL_EXECUTION;
 }
 
@@ -55,6 +67,17 @@ void assignInteger(void *destination, const void *source)
     int *newSource = (int *)source;
 
     *newDest = *newSource;
+}
+
+void swapInteger(void *elem1, void *elem2)
+{
+    int *dbl1 = (int *)elem1;
+    int *dbl2 = (int *)elem2;
+
+    int temp = *dbl1;
+
+    *dbl1 = *dbl2;
+    *dbl2 = temp;
 }
 
 size_t getSizeInteger()
@@ -73,21 +96,22 @@ void freeInteger(void *ptr)
     free(ptr);
 }
 
-static struct TypeInfo *typeInfo = NULL;
+static struct typeInfo *type = NULL;
 
-const struct TypeInfo *getTypeInfoInteger()
+const struct typeInfo *getTypeInfoInteger()
 {
-    if (typeInfo == NULL)
+    if (type == NULL)
     {
-        typeInfo = malloc(sizeof(struct TypeInfo));
-        typeInfo->size = getSizeInteger;
-        typeInfo->assign = assignInteger;
-        typeInfo->add = addInteger;
-        typeInfo->substract = subInteger;
-        typeInfo->multiply = multiplyInteger;
-        typeInfo->input = readInteger;
-        typeInfo->print = printInteger;
-        typeInfo->Free = freeInteger;
+        type = malloc(sizeof(struct typeInfo));
+        type->size = getSizeInteger;
+        type->assign = assignInteger;
+        type->swap = swapInteger;
+        type->add = addInteger;
+        type->substract = subInteger;
+        type->multiply = multiplyInteger;
+        type->input = readInteger;
+        type->print = printInteger;
+        type->destroy = freeInteger;
     }
-    return typeInfo;
+    return type;
 };

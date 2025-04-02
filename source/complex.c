@@ -17,6 +17,7 @@ void addComplex(const void *a, const void *b, void *result)
 void printComplex(const void *a)
 {
     const Complex *complex = (const Complex *)a;
+
     printf("[");
 
     printf("%g", complex->real);
@@ -42,17 +43,29 @@ size_t getSizeComplex()
     return sizeof(Complex);
 }
 
+static void clearInputBuffer()
+{
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF)
+    {
+        ;
+    }
+}
+
 isSuccess readComplex(void *destination)
 {
     Complex *value = (Complex *)destination;
+
+    size_t inputSize = 0;
 
     double tempReal, tempImaginary;
 
     if (scanf(" (%lf, %lf)", &tempReal, &tempImaginary) != 2)
     {
+        printf("Error: Invalid format. Try again.\n");
+        clearInputBuffer();
         return ERROR_OCCURRED;
     }
-
     value->real = tempReal;
     value->imaginary = tempImaginary;
 
@@ -68,10 +81,25 @@ void assignComplex(void *destination, const void *source)
     newDest->imaginary = newSource->imaginary;
 }
 
+void swapComplex(void *elem1, void *elem2)
+{
+    Complex *complex1 = (Complex *)elem1;
+    Complex *complex2 = (Complex *)elem2;
+    Complex temp;
+
+    temp.real = complex1->real;
+    temp.imaginary = complex1->imaginary;
+
+    complex1->imaginary = complex2->imaginary;
+    complex1->real = complex2->real;
+
+    complex2->real = temp.real;
+    complex2->imaginary = temp.imaginary;
+}
+
 void freeComplex(void *value)
 {
-    Complex *complex = (Complex *)value;
-    free(complex);
+    free(value);
 }
 
 void multiplyComplex(const void *a, const void *b, void *result)
@@ -84,20 +112,22 @@ void multiplyComplex(const void *a, const void *b, void *result)
     complexResult->imaginary = (complexA->real * complexB->imaginary) + (complexA->imaginary * complexB->real);
 }
 
-static struct TypeInfo *typeInfo = NULL;
+static struct typeInfo *type = NULL;
 
-const struct TypeInfo *getTypeInfoComplex()
+const struct typeInfo *getTypeInfoComplex()
 {
-    if (typeInfo == NULL)
+    if (type == NULL)
     {
-        typeInfo = malloc(sizeof(struct TypeInfo));
-        typeInfo->size = getSizeComplex;
-        typeInfo->add = addComplex;
-        typeInfo->Free = freeComplex;
-        typeInfo->multiply = multiplyComplex;
-        typeInfo->print = printComplex;
-        typeInfo->input = readComplex;
+        type = malloc(sizeof(struct typeInfo));
+        type->size = getSizeComplex;
+        type->add = addComplex;
+        type->destroy = freeComplex;
+        type->multiply = multiplyComplex;
+        type->print = printComplex;
+        type->input = readComplex;
+        type->assign = assignComplex;
+        type->swap = swapComplex;
     }
 
-    return typeInfo;
+    return type;
 };

@@ -1,22 +1,31 @@
 #pragma once
 #include <stdlib.h>
-#include "errorHandling.h"
-
-typedef void (*BinaryOperator)(const void *a, const void *b, void *result);
-typedef size_t (*GetSize)();
-typedef void (*Assignment)(void *destination, const void *source);
-typedef void (*Print)(const void *element);
-typedef void (*Free)(void *element);
-typedef enum isSuccess (*Input)(void *destination);
-
-typedef struct TypeInfo
+typedef enum isSuccess
 {
-    BinaryOperator add;
-    BinaryOperator substract;
-    BinaryOperator multiply;
-    Assignment assign;
-    Input input;
-    GetSize size;
-    Print print;
-    Free Free;
-} TypeInfo;
+    ERROR_OCCURRED,
+    SUCCESSFUL_EXECUTION
+} isSuccess;
+
+typedef void (*binaryOperator)(const void *a, const void *b, void *result);
+typedef size_t (*getSize)();
+
+//? Do I need both assign and swap?
+typedef void (*assignment)(void *destination, const void *source);
+typedef void (*changePlaces)(void *element1, void *element2);
+
+typedef void (*print)(const void *element);
+typedef void (*destroy)(void *element);
+typedef enum isSuccess (*input)(void *destination);
+
+typedef struct typeInfo
+{
+    binaryOperator add;
+    binaryOperator substract;
+    binaryOperator multiply;
+    assignment assign;
+    changePlaces swap;
+    input input;
+    getSize size;
+    print print;
+    destroy destroy;
+} typeInfo;

@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../inc/typeInfo.h"
 #include "../inc/double.h"
 #include "../inc/doubleImpl.h"
 
@@ -40,6 +39,17 @@ void assignDouble(void *destination, const void *source)
     *newDest = *newSource;
 }
 
+void swapDouble(void *elem1, void *elem2)
+{
+    double *dbl1 = (double *)elem1;
+    double *dbl2 = (double *)elem2;
+
+    double temp = *dbl1;
+
+    *dbl1 = *dbl2;
+    *dbl2 = temp;
+}
+
 size_t getSizeDouble()
 {
     return sizeof(double);
@@ -47,16 +57,28 @@ size_t getSizeDouble()
 
 isSuccess readDouble(void *destination)
 {
-    double valueHolder = 0;
+    char *input = NULL;
+    size_t inputSize = 0;
+    double valueHolder;
 
-    if (scanf("%lf", &valueHolder) != 1)
+    if (getline(&input, &inputSize, stdin) == -1)
     {
+        printf("Error: Invalid input");
+        free(input);
+        return ERROR_OCCURRED;
+    }
+
+    char *endPtr;
+    valueHolder = (double)strtod(input, &endPtr);
+    if (*endPtr != '\n' && *endPtr != '\0')
+    {
+        printf("Error: Please enter a real number.\n");
         return ERROR_OCCURRED;
     }
 
     *(double *)destination = valueHolder;
-    destination = (void *)destination;
 
+    free(input);
     return SUCCESSFUL_EXECUTION;
 }
 
@@ -71,21 +93,22 @@ void freeDouble(void *ptr)
     free(ptr);
 }
 
-static struct TypeInfo *typeInfo = NULL;
+static struct typeInfo *type = NULL;
 
-const struct TypeInfo *getTypeInfoDouble()
+const struct typeInfo *getTypeInfoDouble()
 {
-    if (typeInfo == NULL)
+    if (type == NULL)
     {
-        typeInfo = malloc(sizeof(struct TypeInfo));
-        typeInfo->assign = assignDouble;
-        typeInfo->size = getSizeDouble;
-        typeInfo->add = addDouble;
-        typeInfo->substract = subDouble;
-        typeInfo->multiply = multiplyDouble;
-        typeInfo->print = printDouble;
-        typeInfo->input = readDouble;
-        typeInfo->Free = freeDouble;
+        type = malloc(sizeof(struct typeInfo));
+        type->assign = assignDouble;
+        type->swap = swapDouble;
+        type->size = getSizeDouble;
+        type->add = addDouble;
+        type->substract = subDouble;
+        type->multiply = multiplyDouble;
+        type->print = printDouble;
+        type->input = readDouble;
+        type->destroy = freeDouble;
     }
-    return typeInfo;
+    return type;
 };

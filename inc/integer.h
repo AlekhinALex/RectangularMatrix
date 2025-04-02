@@ -2,4 +2,4 @@
 
 #include "typeInfo.h"
 
-const struct TypeInfo *getTypeInfoInteger();
+const struct typeInfo *getTypeInfoInteger();

@@ -3,6 +3,7 @@
 #include <stdlib.h>
 
 #include "../inc/inputHandling.h"
+#include "../inc/errorHandling.h"
 
 #include "../inc/integer.h"
 #include "../inc/double.h"
@@ -21,9 +22,10 @@ int getChoice(int a, int b)
         printf("Choose an option (%d-%d):\n", a, b);
         printf("Enter your choice: ");
 
+        // TODO check memory leak
         if (getline(&input, &inputSize, stdin) == -1)
         {
-            perror("Error: Invalid input");
+            printf("Error: Invalid input");
             free(input);
             return -1;
         }
@@ -84,59 +86,20 @@ unsigned int inputDimension()
     return dim;
 }
 
-void invalidInput()
+//* Constructors for matrices
+
+void createNewMatrix(unsigned int height, unsigned int length, const typeInfo *type, Matrix *matrix)
 {
-    printf("Error: Invalid format. Try again.\n");
-}
-
-void clearInputBuffer()
-{
-    int c;
-    while ((c = getchar()) != '\n' && c != EOF)
-    {
-        ;
-    }
-}
-
-//* Constructors for matricies
-
-// for input
-Matrix createNewMatrix(int height, int length, int typeHolder)
-{
-    const TypeInfo *type;
-    switch (typeHolder)
-    {
-    case 1:
-        type = getTypeInfoDouble();
-        break;
-    case 2:
-        type = getTypeInfoInteger();
-        break;
-    case 3:
-        type = getTypeInfoComplex();
-        break;
-    default:
-        type = NULL;
-        break;
-    }
-
-    Matrix matrix;
-    matrix.height = height;
-    matrix.length = length;
-    matrix.typeInfo = type;
-    matrix.data = malloc(matrix.height * matrix.length * matrix.typeInfo->size());
-
-    return matrix;
+    matrix->height = height;
+    matrix->length = length;
+    matrix->typeInfo = type;
+    matrix->data = malloc(matrix->height * matrix->length * matrix->typeInfo->size());
 }
 
 // for addition and etc.
-Matrix setupMatrix(int height, int length, const TypeInfo *type)
+void setupMatrix(int height, int length, const typeInfo *type, Matrix *matrix)
 {
-    Matrix matrix;
-    matrix.height = height;
-    matrix.length = length;
-    matrix.typeInfo = type;
-    matrix.data = malloc(matrix.height * matrix.length * matrix.typeInfo->size());
-
-    return matrix;
+    matrix->height = height;
+    matrix->length = length;
+    matrix->typeInfo = type;
 }

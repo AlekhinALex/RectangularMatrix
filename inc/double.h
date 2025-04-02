@@ -2,4 +2,4 @@
 
 #include "typeInfo.h"
 
-const struct TypeInfo *getTypeInfoDouble();
+const struct typeInfo *getTypeInfoDouble();

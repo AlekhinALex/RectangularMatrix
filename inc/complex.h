@@ -1,4 +1,4 @@
 #pragma once
 #include "typeInfo.h"
 
-const struct TypeInfo *getTypeInfoComplex();
+const struct typeInfo *getTypeInfoComplex();

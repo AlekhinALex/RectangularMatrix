@@ -5,6 +5,5 @@
 int getChoice(int minBorder, int maxBorder);
 unsigned int inputDimension();
 void invalidInput();
-void clearInputBuffer();
-Matrix createNewMatrix(int height, int length, int typeHolder);
-Matrix setupMatrix(int height, int length, const TypeInfo *type);
+void createNewMatrix(unsigned int height, unsigned int length, const typeInfo *type, Matrix *matrix);
+void setupMatrix(int height, int length, const typeInfo *type, Matrix *matrix);
