@@ -14,6 +14,16 @@ void addComplex(const void *a, const void *b, void *result)
     complexResult->imaginary = complexA->imaginary + complexB->imaginary;
 }
 
+void substractComplex(const void *a, const void *b, void *result)
+{
+    const Complex *complexA = (const Complex *)a;
+    const Complex *complexB = (const Complex *)b;
+    Complex *complexResult = (Complex *)result;
+
+    complexResult->real = complexA->real - complexB->real;
+    complexResult->imaginary = complexA->imaginary - complexB->imaginary;
+}
+
 void printComplex(const void *a)
 {
     const Complex *complex = (const Complex *)a;
@@ -121,6 +131,7 @@ const struct typeInfo *getTypeInfoComplex()
         type = malloc(sizeof(struct typeInfo));
         type->size = getSizeComplex;
         type->add = addComplex;
+        type->substract = substractComplex;
         type->destroy = freeComplex;
         type->multiply = multiplyComplex;
         type->print = printComplex;

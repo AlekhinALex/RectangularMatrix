@@ -1,5 +1,5 @@
 *.out
 *.exe
 .DS_Store
-built/
+build/
 .vscode/

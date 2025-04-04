@@ -9,8 +9,6 @@
 #include "../inc/inputHandling.h"
 #include "../inc/errorHandling.h"
 
-//* DONE: TODO: REFACTOR error handling while input in integer.c, double.c and complex.c
-// TODO: ADD tests
 void printMenu();
 void determineElemType(Matrix *matrix);
 void enterDims(Matrix *matrix);

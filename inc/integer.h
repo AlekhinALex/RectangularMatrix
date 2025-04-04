@@ -2,4 +2,11 @@
 
 #include "typeInfo.h"
 
-const struct typeInfo *getTypeInfoInteger();
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+    const struct typeInfo *getTypeInfoInteger();
+#ifdef __cplusplus
+}
+#endif

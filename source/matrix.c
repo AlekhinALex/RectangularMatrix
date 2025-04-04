@@ -100,10 +100,10 @@ isSuccess readMatrixComponents(Matrix *matrix)
 
     for (unsigned int i = 0; i < totalElements; i++)
     {
+        isSuccess status;
         while (1)
         {
-            // TODO: somthing wrong with error handling here
-            isSuccess status = matrix->typeInfo->input(currentElement);
+            status = matrix->typeInfo->input(currentElement);
 
             if (status == SUCCESSFUL_EXECUTION)
             {
@@ -151,6 +151,43 @@ isSuccess transposeMatrix(Matrix *matrix)
 void removeInternal(Matrix *matrix)
 {
     free(matrix->data);
+}
+
+isSuccess printMatrixElement(const Matrix *matrix, int x, int y)
+{
+    if (isNullMatrix(matrix))
+    {
+        return ERROR_OCCURRED;
+    }
+
+    size_t elementSize = matrix->typeInfo->size();
+    void *element = (void *)((char *)matrix->data + (y * matrix->length + x) * elementSize);
+    matrix->typeInfo->print(element);
+
+    return SUCCESSFUL_EXECUTION;
+}
+
+isSuccess readMatrixElement(Matrix *matrix, int x, int y)
+{
+    if (isNullMatrix(matrix))
+    {
+        return ERROR_OCCURRED;
+    }
+
+    size_t elementSize = matrix->typeInfo->size();
+    void *element1 = (void *)((char *)matrix->data + (y * matrix->length + x) * elementSize);
+    isSuccess status;
+    while (1)
+    {
+        status = matrix->typeInfo->input(element1);
+
+        if (status == SUCCESSFUL_EXECUTION)
+        {
+            break;
+        }
+    }
+
+    return SUCCESSFUL_EXECUTION;
 }
 
 void printMatrix(const Matrix *matrix)

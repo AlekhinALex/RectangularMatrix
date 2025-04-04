@@ -1,4 +1,13 @@
 #pragma once
 #include "typeInfo.h"
 
-const struct typeInfo *getTypeInfoComplex();
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+    const struct typeInfo *getTypeInfoComplex();
+
+#ifdef __cplusplus
+}
+#endif
