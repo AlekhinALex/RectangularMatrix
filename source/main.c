@@ -41,8 +41,8 @@ int main()
             createNewMatrix(m1.height, m1.height, m1.typeInfo, &m2);
             createNewMatrix(m1.height, m1.height, m1.typeInfo, &result);
 
-            if (readMatrixComponents(&m1) != ERROR_OCCURRED ||
-                readMatrixComponents(&m2) != ERROR_OCCURRED)
+            if (readMatrixComponents(&m1) == SUCCESSFUL_EXECUTION &&
+                readMatrixComponents(&m2) == SUCCESSFUL_EXECUTION)
             {
 
                 if (addMatrix(&m1, &m2, &result) == ERROR_OCCURRED)
@@ -72,18 +72,18 @@ int main()
             determineElemType(&m1);
             printEnteringRules(&m1);
 
-            if (readMatrixComponents(&m1) != ERROR_OCCURRED)
+            if (readMatrixComponents(&m1) == SUCCESSFUL_EXECUTION)
             {
                 m2.typeInfo = m1.typeInfo;
 
                 enterDims(&m2);
                 createNewMatrix(m2.height, m2.length, m2.typeInfo, &m2);
 
-                if (readMatrixComponents(&m2) != ERROR_OCCURRED)
+                if (readMatrixComponents(&m2) == SUCCESSFUL_EXECUTION)
                 {
                     createNewMatrix(m1.height, m2.length, m1.typeInfo, &result);
 
-                    if (multiplyMatrix(&m1, &m2, &result) != ERROR_OCCURRED)
+                    if (multiplyMatrix(&m1, &m2, &result) == SUCCESSFUL_EXECUTION)
                     {
                         printf("Result matrix:\n");
                         printMatrix(&result);
@@ -109,19 +109,17 @@ int main()
             enterDims(&m);
             determineElemType(&m);
 
-            if (readMatrixComponents(&m) == ERROR_OCCURRED)
+            if (readMatrixComponents(&m) == SUCCESSFUL_EXECUTION)
             {
-                ;
-            }
-
-            else if (transposeMatrix(&m) == ERROR_OCCURRED)
-            {
-                printf("Failed to transpose matrix\n\n");
-            }
-            else
-            {
-                printf("Tansposed matrix:\n");
-                printMatrix(&m);
+                if (transposeMatrix(&m) == ERROR_OCCURRED)
+                {
+                    printf("Failed to transpose matrix\n\n");
+                }
+                else
+                {
+                    printf("Tansposed matrix:\n");
+                    printMatrix(&m);
+                }
             }
 
             removeInternal(&m);
