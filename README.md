@@ -22,7 +22,8 @@
 ## Как запустить
 
 1. mkdir build && cd build
-2. make
-3. ./googleTests ot ./lab1
+2. cmake ..
+3. make
+4. выбрать ./googleTests или ./lab1
 
 ---
