@@ -5,6 +5,7 @@
 extern "C"
 {
 #endif
+
     typedef enum isSuccess
     {
         ERROR_OCCURRED,

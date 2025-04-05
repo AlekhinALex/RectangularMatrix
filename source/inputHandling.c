@@ -22,7 +22,6 @@ int getChoice(int a, int b)
         printf("Choose an option (%d-%d):\n", a, b);
         printf("Enter your choice: ");
 
-        // TODO check memory leak
         if (getline(&input, &inputSize, stdin) == -1)
         {
             printf("Error: Invalid input");
@@ -84,22 +83,4 @@ unsigned int inputDimension()
 
     free(input);
     return dim;
-}
-
-//* Constructors for matrices
-
-void createNewMatrix(unsigned int height, unsigned int length, const typeInfo *type, Matrix *matrix)
-{
-    matrix->height = height;
-    matrix->length = length;
-    matrix->typeInfo = type;
-    matrix->data = malloc(matrix->height * matrix->length * matrix->typeInfo->size());
-}
-
-// for addition and etc.
-void setupMatrix(int height, int length, const typeInfo *type, Matrix *matrix)
-{
-    matrix->height = height;
-    matrix->length = length;
-    matrix->typeInfo = type;
 }

@@ -6,6 +6,7 @@
 extern "C"
 {
 #endif
+
     void addDouble(const void *a, const void *b, void *result);
     void subDouble(const void *a, const void *b, void *result);
     void multiplyDouble(const void *a, const void *b, void *result);
@@ -14,6 +15,7 @@ extern "C"
     isSuccess readDouble(void *destination);
     void printDouble(const void *a);
     void freeDouble(void *a);
+
 #ifdef __cplusplus
 }
 #endif

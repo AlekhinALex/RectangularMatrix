@@ -6,7 +6,9 @@
 extern "C"
 {
 #endif
+
     const struct typeInfo *getTypeInfoInteger();
+
 #ifdef __cplusplus
 }
 #endif

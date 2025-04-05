@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+#include <iostream>
 #include <string.h>
 
 #include "../inc/complex.h"
@@ -267,6 +268,32 @@ TEST(TypeTests, ComplexOperations)
     complexType->multiply(&a, &b, &result);
     EXPECT_DOUBLE_EQ(result.real, -5.0);
     EXPECT_DOUBLE_EQ(result.imaginary, 14.0);
+}
+
+TEST(AdditionalTest, newFuncionTests)
+{
+    Matrix matrixDouble, matrixComplex;
+    createNewMatrix(4, 4, getTypeInfoDouble(), &matrixDouble);
+    createNewMatrix(4, 4, getTypeInfoComplex(), &matrixComplex);
+
+    double values1[] = {
+        1.5, 2.5, 3.5, 4.5,
+        5.5, 6.5, 7.5, 8.5,
+        9.5, 10.5, 11.5, 12.5,
+        13.5, 14.5, 15.5, 16.5};
+
+    Complex values2[] = {{-777, 123}, {1.5, 1.5}, {2.5, 2.5}, {3.5, 3.5}, {0.5, 0.5}, {1.5, 1.5}, {0.999, 0.999}, {3.5, 3.5}, {0.5, 0.5}, {1.5, 1.5}, {2.5, 2.5}, {3.5, 3.5}, {0.5, 0.5}, {1.5, 1.5}, {2.5, 2.5}, {192, -2025.2025}};
+
+    memcpy(matrixDouble.data, values1, sizeof(values1));
+    memcpy(matrixComplex.data, values2, sizeof(values2));
+
+    EXPECT_DOUBLE_EQ(printMatrixElement(&matrixDouble, 1, 1), SUCCESSFUL_EXECUTION);
+    EXPECT_DOUBLE_EQ(printMatrixElement(&matrixDouble, 4, 4), SUCCESSFUL_EXECUTION);
+    EXPECT_DOUBLE_EQ(printMatrixElement(&matrixDouble, 2, 3), SUCCESSFUL_EXECUTION);
+    std::cout << "\n";
+    EXPECT_DOUBLE_EQ(printMatrixElement(&matrixComplex, 1, 1), SUCCESSFUL_EXECUTION);
+    EXPECT_DOUBLE_EQ(printMatrixElement(&matrixComplex, 4, 4), SUCCESSFUL_EXECUTION);
+    EXPECT_DOUBLE_EQ(printMatrixElement(&matrixComplex, 2, 3), SUCCESSFUL_EXECUTION);
 }
 
 int main(int argc, char **argv)

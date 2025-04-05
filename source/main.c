@@ -31,146 +31,100 @@ int main()
             Matrix m2;
             Matrix result;
 
-            printf("\nMatrix addition(A + B)\n");
-            printf("--------------------\n");
-            printf("First matrix: \n");
-            printf("--------------------\n\n");
+            printf("Matrix addition(A + B)\n");
 
-            //* Enter type and dims of matrices
             enterDims(&m1);
             determineElemType(&m1);
 
             printEnteringRules(&m1);
 
-            if (readMatrixComponents(&m1) == ERROR_OCCURRED)
-            {
-                break;
-            }
-
-            //* Setup m2 and result
             createNewMatrix(m1.height, m1.height, m1.typeInfo, &m2);
             createNewMatrix(m1.height, m1.height, m1.typeInfo, &result);
 
-            printf("\n--------------------\n");
-            printf("Enter second matrix: \n");
-            printf("--------------------\n\n");
+            if (readMatrixComponents(&m1) != ERROR_OCCURRED ||
+                readMatrixComponents(&m2) != ERROR_OCCURRED)
+            {
 
-            if (readMatrixComponents(&m2) == ERROR_OCCURRED)
-            {
-                removeInternal(&m1);
-                removeInternal(&m2);
-                break;
+                if (addMatrix(&m1, &m2, &result) == ERROR_OCCURRED)
+                {
+                    printf("Failed to add matrices\n");
+                }
+                else
+                {
+                    printf("Result matrix:\n");
+                    printMatrix(&result);
+                }
             }
 
-            if (addMatrix(&m1, &m2, &result) == ERROR_OCCURRED)
-            {
-                removeInternal(&m1);
-                removeInternal(&m2);
-                printf("Failed to add matrices\n\n");
-            }
-            else
-            {
-                printf("\nResult matrix:\n");
-                printf("--------------------\n");
-                printMatrix(&result);
-                removeInternal(&m1);
-                removeInternal(&m2);
-                removeInternal(&result);
-            }
+            removeInternal(&m1);
+            removeInternal(&m2);
+            removeInternal(&result);
         }
         break;
 
         case 2: // Matrix multiplication
         {
-            Matrix m1;
-            Matrix m2;
-            Matrix result;
+            Matrix m1, m2, result;
 
-            printf("\nMatrix Multiplication (A × B)\n");
-            printf("--------------------\n");
-            printf("First matrix: \n");
-            printf("--------------------\n\n");
+            printf("Matrix Multiplication (A × B)\n");
 
-            //* Input Elem type and size
             enterDims(&m1);
             determineElemType(&m1);
-
-            //* Second matrix must have same type
-            m2.typeInfo = m1.typeInfo;
-
             printEnteringRules(&m1);
 
-            if (readMatrixComponents(&m1) == ERROR_OCCURRED)
+            if (readMatrixComponents(&m1) != ERROR_OCCURRED)
             {
-                break;
+                m2.typeInfo = m1.typeInfo;
+
+                enterDims(&m2);
+                createNewMatrix(m2.height, m2.length, m2.typeInfo, &m2);
+
+                if (readMatrixComponents(&m2) != ERROR_OCCURRED)
+                {
+                    createNewMatrix(m1.height, m2.length, m1.typeInfo, &result);
+
+                    if (multiplyMatrix(&m1, &m2, &result) != ERROR_OCCURRED)
+                    {
+                        printf("Result matrix:\n");
+                        printMatrix(&result);
+                    }
+                    else
+                    {
+                        printf("Failed to multiply matrices\n\n");
+                    }
+                }
             }
 
-            printf("\n--------------------\n");
-            printf("Enter second matrix: \n");
-            printf("--------------------\n\n");
-
-            //* Dims for second matrix
-            enterDims(&m2);
-
-            createNewMatrix(m2.height, m2.length, m2.typeInfo, &m2);
-
-            if (readMatrixComponents(&m2) == ERROR_OCCURRED)
-            {
-                removeInternal(&m1);
-                removeInternal(&m2);
-                break;
-            }
-
-            //* Setup result matrix with size and type
-            createNewMatrix(m1.height, m2.length, m1.typeInfo, &result);
-
-            if (multiplyMatrix(&m1, &m2, &result) == ERROR_OCCURRED)
-            {
-                removeInternal(&m1);
-                removeInternal(&m2);
-                printf("Failed to multiply matrices\n\n");
-            }
-            else
-            {
-                printf("\nResult matrix:\n");
-                printf("--------------------\n");
-                printMatrix(&result);
-                removeInternal(&m1);
-                removeInternal(&m2);
-                removeInternal(&result);
-            }
+            removeInternal(&m1);
+            removeInternal(&m2);
+            removeInternal(&result);
         }
         break;
         case 3: // Matrix transposition
         {
             Matrix m;
 
-            printf("\nMatrix Transposition\n");
-            printf("--------------------\n");
-            printf("Enter matrix: \n");
-            printf("--------------------\n\n");
+            printf("Matrix Transposition\n");
 
-            //* Enter type and dims of matrices
             enterDims(&m);
             determineElemType(&m);
 
             if (readMatrixComponents(&m) == ERROR_OCCURRED)
             {
-                break;
+                ;
             }
 
-            if (transposeMatrix(&m) == ERROR_OCCURRED)
+            else if (transposeMatrix(&m) == ERROR_OCCURRED)
             {
-                removeInternal(&m);
                 printf("Failed to transpose matrix\n\n");
             }
             else
             {
-                printf("\nTransposed matrix:\n");
-                printf("--------------------\n");
+                printf("Tansposed matrix:\n");
                 printMatrix(&m);
-                removeInternal(&m);
             }
+
+            removeInternal(&m);
         }
         break;
         case 4:
@@ -199,7 +153,7 @@ void determineElemType(Matrix *matrix)
 {
     int typeHolder;
 
-    printf("\nEnter what types of data will be stored:\n");
+    printf("Enter what types of data will be stored:\n");
     printf("1) Real numbers\n");
     printf("2) Integers\n");
     printf("3) Complex numbers\n");

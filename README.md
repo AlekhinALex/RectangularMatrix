@@ -18,3 +18,11 @@
 3. **Транспонирование матриц**
 
 ---
+
+## Как запустить
+
+1. mkdir build && cd build
+2. make
+3. ./googleTests ot ./lab1
+
+---

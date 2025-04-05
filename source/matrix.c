@@ -92,7 +92,7 @@ isSuccess multiplyMatrix(const Matrix *matrix1, const Matrix *matrix2, Matrix *r
 isSuccess readMatrixComponents(Matrix *matrix)
 {
     printf("\nEnter matrix: %ux%u\n", matrix->height, matrix->length);
-    printf("-------------------\n");
+    printf("---\n");
 
     size_t elementSize = matrix->typeInfo->size();
     unsigned int totalElements = matrix->height * matrix->length;
@@ -153,21 +153,22 @@ void removeInternal(Matrix *matrix)
     free(matrix->data);
 }
 
-isSuccess printMatrixElement(const Matrix *matrix, int x, int y)
+isSuccess printMatrixElement(const Matrix *matrix, int row, int colomn)
 {
     if (isNullMatrix(matrix))
     {
         return ERROR_OCCURRED;
     }
-
+    row--;
+    colomn--;
     size_t elementSize = matrix->typeInfo->size();
-    void *element = (void *)((char *)matrix->data + (y * matrix->length + x) * elementSize);
+    void *element = (void *)((char *)matrix->data + (row * matrix->length + colomn) * elementSize);
     matrix->typeInfo->print(element);
 
     return SUCCESSFUL_EXECUTION;
 }
 
-isSuccess readMatrixElement(Matrix *matrix, int x, int y)
+isSuccess readMatrixElement(Matrix *matrix, int row, int colomn)
 {
     if (isNullMatrix(matrix))
     {
@@ -175,7 +176,7 @@ isSuccess readMatrixElement(Matrix *matrix, int x, int y)
     }
 
     size_t elementSize = matrix->typeInfo->size();
-    void *element1 = (void *)((char *)matrix->data + (y * matrix->length + x) * elementSize);
+    void *element1 = (void *)((char *)matrix->data + (row * matrix->length + colomn) * elementSize);
     isSuccess status;
     while (1)
     {
@@ -188,6 +189,14 @@ isSuccess readMatrixElement(Matrix *matrix, int x, int y)
     }
 
     return SUCCESSFUL_EXECUTION;
+}
+
+void createNewMatrix(unsigned int height, unsigned int length, const typeInfo *type, Matrix *matrix)
+{
+    matrix->height = height;
+    matrix->length = length;
+    matrix->typeInfo = type;
+    matrix->data = malloc(matrix->height * matrix->length * matrix->typeInfo->size());
 }
 
 void printMatrix(const Matrix *matrix)

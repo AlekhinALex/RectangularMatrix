@@ -6,6 +6,7 @@
 extern "C"
 {
 #endif
+
     typedef struct Matrix
     {
         unsigned int length;
@@ -22,7 +23,7 @@ extern "C"
     // TODO: Доступ по индексу к эдементу на чтение и на запись
     enum isSuccess printMatrixElement(const Matrix *matrix, int x, int y);
     enum isSuccess readMatrixElement(Matrix *matrix, int x, int y);
-
+    void createNewMatrix(unsigned int height, unsigned int length, const typeInfo *type, Matrix *matrix);
     void printMatrix(const Matrix *matrix);
     void removeInternal(Matrix *matrix);
 

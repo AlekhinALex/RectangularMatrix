@@ -22,16 +22,6 @@ add_executable(lab1
     source/double.c
 )
 
-add_executable(assertTests
-    source/testMatrix.c
-    source/matrix.c
-    source/errorHandling.c
-    source/integer.c
-    source/inputHandling.c
-    source/complex.c
-    source/double.c
-)
-
 add_executable(googleTests
     source/googleTests.cpp
     source/matrix.c
