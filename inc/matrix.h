@@ -25,7 +25,7 @@ extern "C"
     enum isSuccess readMatrixElement(Matrix *matrix, int x, int y);
     void createNewMatrix(unsigned int height, unsigned int length, const typeInfo *type, Matrix *matrix);
     void printMatrix(const Matrix *matrix);
-    void removeInternal(Matrix *matrix);
+    void removeInternal(Matrix *matrix); // cleanup
 
 #ifdef __cplusplus
 }

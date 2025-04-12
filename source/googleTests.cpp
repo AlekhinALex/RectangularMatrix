@@ -1,5 +1,4 @@
 #include <gtest/gtest.h>
-#include <iostream>
 #include <string.h>
 
 #include "../inc/complex.h"

@@ -100,15 +100,8 @@ isSuccess readMatrixComponents(Matrix *matrix)
 
     for (unsigned int i = 0; i < totalElements; i++)
     {
-        isSuccess status;
-        while (1)
+        while (matrix->typeInfo->input(currentElement) != SUCCESSFUL_EXECUTION)
         {
-            status = matrix->typeInfo->input(currentElement);
-
-            if (status == SUCCESSFUL_EXECUTION)
-            {
-                break;
-            }
         }
         currentElement += elementSize;
     }
@@ -139,8 +132,8 @@ isSuccess transposeMatrix(Matrix *matrix)
     {
         for (unsigned int j = 0; j < i; j++)
         {
-            void *element1 = (void *)((char *)matrix->data + (i * oldLength + j) * elementSize);
-            void *element2 = (void *)((char *)matrix->data + (j * oldHeight + i) * elementSize);
+            void *element1 = (char *)matrix->data + (i * oldLength + j) * elementSize;
+            void *element2 = (char *)matrix->data + (j * oldHeight + i) * elementSize;
 
             matrix->typeInfo->swap(element1, element2);
         }
